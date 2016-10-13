@@ -1,0 +1,12 @@
+<?php $this->load->view('emails/email_head'); ?>
+Greetings!<br>
+<br>
+We are very happy to see you join us.<br>
+Click on the link below to verify your email address:<br>
+<a href='<?= site_url() ?>registerme/<?= urlencode($enc_random) ?>/<?= urlencode($to) ?>'>Click Here! »</a><br>
+<br>
+Regards,<br>
+<br>
+Gnana<br>
+On behalf of Team RoughSheet
+<?php $this->load->view('emails/email_footer'); ?>

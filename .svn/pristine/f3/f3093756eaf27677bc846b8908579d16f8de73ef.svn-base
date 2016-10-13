@@ -1,0 +1,100 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Focus_controller
+ *
+ * @author Pravinkumar
+ */
+class Focus_controller extends MY_Controller {
+
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function getFocusArea() {
+        $uid = $this->session->userdata('UID');
+
+        $subjects_q = $this->db->get_where(SUBJECTS);
+//        $subjects_q = mysql_query("select * from " . SUBJECTS) or error_log(mysql_error());
+        $s_c = $subjects_q->num_rows();
+        $sub_ids = array();
+        $id_p = 0;
+        /* echo"<table>";
+          while($sub_d=mysql_fetch_assoc($subjects_q)){
+          $sub_ids[$id_p]=$subjects_d['sub_id'];
+          echo"<table class='table table-striped' ><tr><th>" . strtoupper(getSubName($subjects_d['sub_id'])) . "</th></tr>";
+          echo"<tr></tr></table>";
+          $id_p++;
+          }
+          echo"</table>";
+         */
+        $s_rev = 0;
+        $i = 0;
+        $data = array();
+        foreach ($subjects_q->result_array() as $subjects_d) {
+            $data[$i] = $subjects_d;
+            $data[$i]['subname'] = $this->site->getSubName($data[$i]['sub_id']);
+            $sub_ids[$id_p] = $subjects_d['sub_id'];
+//            echo "<div class='panel panel-default glass'><div class='panel-heading' role='tab' id='headingOne' style='background: transparent;'><h4 class='panel-title'>";
+//            echo "<a data-toggle='collapse' data-parent='#$subjects_d[sub_id]' href='#$subjects_d[sub_id]' aria-expanded='true' aria-controls='$subjects_d[sub_id]'>";
+//            echo"" . getSubName($subjects_d['sub_id']) . "</a>";
+//            echo "</h4></div><div id='$subjects_d[sub_id]' class='panel-collapse collapse' role='tabpanel' aria-labelledby='headingOne'><div class='panel-body'>";
+            $sub_s_rev = 0; // count sub if found as weak area
+            $tid_arr = $this->site->getAllTopicIds($subjects_d['sub_id']);
+            $tid_str = "";
+            foreach ($tid_arr as $tid) {
+                //echo"<li>111111111</li>";
+                $tid_q = $this->db->get_where(DPP_LOG, array('UID' => $uid, 'sub_id' => $tid));
+//                $tid_q = mysql_query("select * from " . DPP_LOG . " WHERE UID='$uid' and sub_id='$tid'") or error_log(mysql_error());
+                $tid_d = (array) $tid_q->row();
+                $dpp_data = json_decode($tid_d['data']);
+                $dpp_count = count($dpp_data);
+                $marks = 0;
+                if ($dpp_count <= 0) {
+                    goto skip_sub;
+                } elseif ($dpp_count == 1) {
+                    $c = $dpp_data[0][0];
+                    $i = $dpp_data[0][1];
+                    $marks = $c * 3 - $i;
+                } else {
+                    $c = $dpp_data[$dpp_count][0] + $dpp_data[$dpp_count - 1][0];
+                    $i = $dpp_data[$dpp_count][1] + $dpp_data[$dpp_count - 1][1];
+                    $marks = $c * 3 - $i;
+                }
+                if ($marks < 6) {
+                    $t_name = $this->site->getTopicName($tid);
+                    array_push($data[$i]['tname'], $t_name);
+//                    $tid_str.="<li>$t_name</li>";
+                    $s_rev++;
+                    $sub_s_rev++;
+                }
+                $i++;
+                skip_sub:
+            }
+            echo json_encode(array('s' => '1', 'data' => $data, 'sub_s' => $sub_s_rev));
+//            if ($sub_s_rev == 0) {
+//                echo "<div class='alert alert-success' style='color:#fff;background: #37a8df;'>No weak area at the moment.</div>";
+//            } else {
+//                echo"<ul>$tid_str</ul>";
+//            }
+//            echo "</div>
+//    </div></div>";
+            $id_p++;
+        }
+        echo json_encode(array('s' => '0', 's_rev' => $s_rev));
+//        if ($s_rev == 0) {
+//            $span = $id_p;
+//            echo"</br></br><div class='alert alert-success wow shake' style='color:#fff;background: #37a8df;'>No weak area at the moment.<button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+//  <span aria-hidden='true'>&times;</span>
+//</button></div>";
+//        }
+//        echo"</div></div>";
+    }
+
+}

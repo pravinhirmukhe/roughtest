@@ -1,0 +1,10 @@
+copy.src.files=false
+copy.src.on.open=false
+copy.src.target=C:\\xampp\\htdocs\\PhpProject1
+index.file=index.php
+remote.connection=All_Linosys-64ddb4
+remote.directory=/proj/roughsheet
+remote.upload=MANUALLY
+remote.upload.directly=true
+run.as=REMOTE
+url=http://localhost/roughsheetn/

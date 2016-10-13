@@ -1,0 +1,72 @@
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="content-main">
+        <?php $this->load->view('admin/layout/breadcrumb') ?>
+        <div class="content-top">	
+            <div class="clearfix">
+                <?php /*  <a href="<?= site_url() ?>admin/Product/tables">
+                  <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                  <div class="content-top-1">
+                  <div class="top-content pd">
+                  <i class="fa fa-product-hunt fa-2x"></i>
+                  <h5>Products</h5>
+                  <label class="mg"><?= number_format($prodcount) ?></label>
+                  </div>
+                  <div class="clearfix"></div>
+                  </div>
+                  </div>
+                  </a>
+                  <a href="<?= site_url() ?>admin/Users">
+                  <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                  <div class="content-top-1">
+                  <div class="top-content pd">
+                  <i class="fa fa-users fa-2x"></i>
+                  <h5>Customers</h5>
+                  <label class="mg"><?= number_format($custcount) ?></label>
+                  </div>
+                  <div class="clearfix"></div>
+                  </div>
+                  </div>
+                  </a>
+                  <a href="#">
+                  <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                  <div class="content-top-1">
+                  <div class="top-content pd">
+                  <i class="fa fa-adjust fa-2x"></i>
+                  <h5>Sales</h5>
+                  <label class="mg">₹<?= number_format(8761) ?></label>
+                  </div>
+                  <div class="clearfix"></div>
+                  </div>
+                  </div>
+                  </a>
+                  <a href="<?= site_url() ?>admin/supplier">
+                  <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                  <div class="content-top-1">
+                  <div class="top-content pd ">
+                  <i class="fa fa-adjust fa-2x"></i>
+                  <h5>Vendors</h5>
+                  <label class="mg"><?= number_format($vendcount) ?></label>
+                  </div>
+                  <div class="clearfix"></div>
+                  </div>
+                  </div>
+                  </a>
+                  <a href="#">
+                  <div class="col-lg-2 col-md-2 col-sm-6 col-xs-6">
+                  <div class="content-top-1">
+                  <div class="top-content pd">
+                  <i class="fa fa-adjust fa-2x"></i>
+                  <h5>Orders</h5>
+                  <label class="mg"><?= number_format($ordercount) ?></label>
+                  </div>
+                  <div class="clearfix"></div>
+                  </div>
+                  </div>
+                  </a><? */ ?>
+
+            </div>
+            <?php $this->load->view('admin/layout/footer'); ?>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>

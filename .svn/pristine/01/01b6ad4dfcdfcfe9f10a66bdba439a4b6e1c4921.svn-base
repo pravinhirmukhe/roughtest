@@ -1,0 +1,140 @@
+-- phpMyAdmin SQL Dump
+-- version 4.2.7.1
+-- http://www.phpmyadmin.net
+--
+-- Host: 127.0.0.1
+-- Generation Time: Oct 05, 2016 at 02:20 PM
+-- Server version: 5.6.20
+-- PHP Version: 5.5.15
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `roughsheet`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rs_admin_menu`
+--
+
+CREATE TABLE IF NOT EXISTS `rs_admin_menu` (
+`id` int(11) NOT NULL COMMENT 'Admin menus',
+  `name` varchar(255) DEFAULT NULL COMMENT 'menuname',
+  `url` text COMMENT 'menu url',
+  `icon` varchar(100) DEFAULT NULL COMMENT 'menu icon',
+  `parent_id` int(11) DEFAULT NULL COMMENT 'menu parent id',
+  `create_date` datetime DEFAULT NULL COMMENT 'create date',
+  `created_by` int(11) DEFAULT NULL COMMENT 'created by',
+  `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time stamp',
+  `status` enum('Active','Deactive') DEFAULT NULL COMMENT 'status'
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
+
+--
+-- Dumping data for table `rs_admin_menu`
+--
+
+INSERT INTO `rs_admin_menu` (`id`, `name`, `url`, `icon`, `parent_id`, `create_date`, `created_by`, `modify_date`, `status`) VALUES
+(1, 'Airport', 'admin/Airport/airports', 'fa fa-plane', 2, NULL, NULL, '2016-09-05 11:30:49', 'Active'),
+(2, 'Settings', 'admin/', 'fa fa-cog', 0, '2016-09-05 04:59:16', 1, '2016-09-05 11:47:45', 'Active'),
+(3, 'Terminal', 'admin/Terminal/terminal', 'fa fa-terminal', 2, '2016-09-05 05:01:42', 1, '2016-09-05 11:31:42', 'Active'),
+(4, 'Category', 'admin/Category/category', 'fa fa-tasks', 2, '2016-09-05 05:03:52', 1, '2016-09-05 11:33:52', 'Active'),
+(5, 'Bannar', 'admin/bannar', 'fa fa-picture-o', 2, '2016-09-05 05:13:35', 1, '2016-09-05 12:45:46', 'Active'),
+(6, 'Bannar Image', 'admin/bannar_image', 'fa fa-picture-o', 2, '2016-09-05 05:14:23', 1, '2016-09-05 11:44:23', 'Active'),
+(7, 'Supplier', 'admin/supplier', 'fa fa-truck', 2, '2016-09-05 05:15:18', 1, '2016-09-05 11:45:18', 'Active'),
+(8, 'Shipper', 'admin/shipper', 'fa fa-truck', 2, '2016-09-05 05:15:47', 1, '2016-09-05 11:45:47', 'Active'),
+(9, 'Tax', 'admin/tax', 'fa fa-tasks', 2, '2016-09-05 05:17:00', 1, '2016-09-05 11:47:00', 'Active'),
+(10, 'Users', 'admin/Users', 'fa fa-users', 2, '2016-09-05 05:17:26', 1, '2016-09-05 11:47:26', 'Active'),
+(11, 'Products', 'admin/Product/tables', 'fa fa-bars', 0, '2016-09-05 06:33:40', 1, '2016-09-05 13:03:40', 'Active'),
+(12, 'Gender', 'admin/gender', 'fa fa-users', 2, '2016-09-06 09:42:32', 1, '2016-09-06 04:12:32', 'Active'),
+(13, 'Coupan', 'admin/coupan', 'fa fa-terminal', 2, '2016-09-06 09:52:36', 1, '2016-09-06 04:22:36', 'Active'),
+(14, 'Order', 'admin/order', 'fa fa-terminal', 0, '2016-09-06 09:53:14', 1, '2016-09-06 04:23:14', 'Active'),
+(15, 'Site Information', 'admin/SiteInformation/site_information', 'fa fa-user', 2, '2016-09-06 02:40:37', 1, '2016-09-06 12:40:37', 'Active'),
+(16, 'Country', 'admin/country', 'fa fa-globe', 2, '2016-09-08 12:56:17', 1, '2016-09-08 10:56:17', 'Active'),
+(17, 'State', 'admin/state', 'fa fa-terminal', 2, '2016-09-08 12:57:30', 1, '2016-09-08 10:57:30', 'Active'),
+(18, 'City', 'admin/city', 'fa fa-university', 2, '2016-09-08 12:58:07', 1, '2016-09-08 10:58:07', 'Active'),
+(19, 'FAQ', 'admin/faq', 'fa fa-question-circle', 2, '2016-09-19 08:31:15', 1, '2016-09-19 06:32:08', 'Active'),
+(20, 'Terms and Conditions', 'admin/terms', 'fa fa-file-text', 2, '2016-09-22 02:51:50', 1, '2016-09-22 12:51:50', 'Active');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rs_users`
+--
+
+CREATE TABLE IF NOT EXISTS `rs_users` (
+`id` int(11) unsigned NOT NULL,
+  `last_ip_address` varbinary(45) DEFAULT NULL,
+  `ip_address` varbinary(45) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(500) NOT NULL,
+  `salt` varchar(40) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `activation_code` varchar(40) DEFAULT NULL,
+  `forgotten_password_code` varchar(40) DEFAULT NULL,
+  `forgotten_password_time` int(11) unsigned DEFAULT NULL,
+  `remember_code` varchar(40) DEFAULT NULL,
+  `created_on` int(11) unsigned NOT NULL,
+  `last_login` int(11) unsigned DEFAULT NULL,
+  `active` tinyint(1) unsigned DEFAULT NULL,
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(50) DEFAULT NULL,
+  `company` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `avatar` varchar(55) DEFAULT NULL,
+  `gender` int(11) DEFAULT NULL,
+  `group_id` int(10) unsigned NOT NULL,
+  `award_points` int(11) DEFAULT '0',
+  `supplier_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
+
+--
+-- Dumping data for table `rs_users`
+--
+
+INSERT INTO `rs_users` (`id`, `last_ip_address`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`, `avatar`, `gender`, `group_id`, `award_points`, `supplier_id`) VALUES
+(1, NULL, 0x3a3a31, 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, 'ND9QWMFpfi3javPl3sAUMO', 1268889823, 1475666621, 1, 'Admin', 'istrator', 'ADMIN', '7507546002', NULL, 1, 1, 0, 0),
+(19, NULL, 0x3a3a31, '', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', NULL, 'pravin@linosys.net', NULL, NULL, NULL, NULL, 1472910094, 1473153605, 1, 'Pravinkumar', 'Hirmukhe', 'Linosys', '7507546003', NULL, 1, 2, 0, 2),
+(20, NULL, '', 'khanpuja20@gmail.com', 'dUTI2Z7E', NULL, 'khanpuja20@gmail.com', NULL, NULL, NULL, NULL, 2016, NULL, NULL, 'Raj', 'kumar', 'infosys', '5241639875', NULL, NULL, 0, 0, NULL);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `rs_admin_menu`
+--
+ALTER TABLE `rs_admin_menu`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `rs_users`
+--
+ALTER TABLE `rs_users`
+ ADD PRIMARY KEY (`id`), ADD KEY `group_id` (`group_id`), ADD KEY `group_id_2` (`group_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `rs_admin_menu`
+--
+ALTER TABLE `rs_admin_menu`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Admin menus',AUTO_INCREMENT=21;
+--
+-- AUTO_INCREMENT for table `rs_users`
+--
+ALTER TABLE `rs_users`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=21;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

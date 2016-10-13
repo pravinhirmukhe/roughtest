@@ -1,0 +1,37 @@
+<?php
+error_reporting( E_ALL );
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Admin_controller
+ *
+ * @author Pravinkumar
+ */
+class Admin_controller extends MY_Controller {
+
+//put your code here
+    
+    function __construct() {
+        parent::__construct();
+        $this->load->model('admin/Admin_model');
+        //$this->load->model('site');
+        $this->load->library('form_validation');
+        $this->load->helper('message');
+        $this->load->helper(array('url', 'form'));
+        $this->load->library('session');
+        $this->data['filters'] = $this->session->userdata('filters');
+    }
+    public function dashboard() {
+        //$this->data['ordercount'] = $this->site->getOrderCount();
+        $this->data['template'] = "dashboard";
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Dashboard"));
+        $this->admin_layout($this->data);
+    }
+    
+
+
+}

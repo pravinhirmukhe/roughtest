@@ -1,0 +1,33 @@
+<div ng-controller="performancecontrol">
+    <style type="text/css">.sm_color4{background-color:#fff !important;color:#febf10 !important;outline: dashed 2px #d4d4d4 !important;}
+        .my_sub{/*border-top:solid 2px #febf10;*//*border-bottom:2px solid #37a8df;*/}
+        .active-home{background:#fff;border:none;}.active-friends{background:#fff;border:none;}.active-profile{background:#fff;border:none;}</style>
+    <script>
+                $(function () {
+                    $('.btn-default').click(function () {
+                        $(this).addClass('active').siblings().removeClass('active');
+                    });
+                });</script>
+    <div class='panel panel-default glass wow fadeIn' styel='border-color:#febf10;' >
+        <div class='panel-heading glass' style='background:#febf10;color:#fff;'>
+            <h3 class='panel-title'><center>My Performance</center>
+            </h3>
+        </div>
+        <div class='panel-body'>
+            <div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>
+                <center>
+                    <a ng-repeat="p in perform.data" class='btn btn-default my_sub' style='margin:0px 10px 10px 10px;' ng-click="getGraph(p.sub_id);">{{p.sub_name}}</a>
+                </center>
+            </div>
+            <ul class='list-group'> 
+                <li style='list-style: none;'> 
+
+                    <div id='perf_graph'>
+                    </div>
+                </li>
+                <li style='list-style: none;'> <div id='perf_graph_pw'> </div></li>
+                <li style='list-style: none;'> <div id='perf_graph_pc'> </div></li>
+            </ul>
+        </div>
+    </div>
+</div>

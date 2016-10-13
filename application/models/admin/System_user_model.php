@@ -1,0 +1,115 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of System_user_model
+ *
+ * @author Pravinkumar
+ */
+class System_user_model extends MY_Model {
+
+    //put your code here
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function getGroups() {
+        return $this->getResult($this->db->select('id,name')->get('groups'));
+    }
+    public function getGroupsAllDetails($id) {
+       return $this->getResult($this->db->get_where('groups', array('id' => $id)));
+    }
+    
+    public function saveUserGroup($data) {
+        if ($this->db->insert('groups', $data)) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    public function getUser($id) {
+        return $this->getResult($this->db->get_where('system_users', array('id' => $id)));
+    }
+
+    public function getAdminMenus() {
+        return $this->getResult($this->db->select('id,name')->get_where('admin_menu', array('parent_id' => 0)));
+    }
+
+    public function getAdminMenu($id) {
+        return $this->getResult($this->db->get_where('admin_menu', array('id' => $id)));
+    }
+
+    public function saveSystemUser($data) {
+        if ($this->db->insert('system_users', $data)) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+
+    public function saveMenu($data) {
+        if ($this->db->insert('admin_menu', $data)) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateSystemUser($data, $id) {
+        if ($this->db->update('system_users', $data, array('id' => $id))) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateAdminMenu($data, $id) {
+        if ($this->db->update('admin_menu', $data, array('id' => $id))) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    
+    public function updateUserGroup($data, $id) {
+        if ($this->db->update('groups', $data, array('id' => $id))) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+
+    public function saveSystemUserMenuAlloc($data) {
+        if ($this->db->select('admin_id')->get_where('menu_alloc', array('admin_id' => $data['admin_id']))->num_rows()) {
+            $id = $data['admin_id'];
+            unset($data['admin_id']);
+            $data['menu_ids'] = json_decode($data['menu_ids'], true);
+            $data['menu_ids'] = array_filter($data['menu_ids']);
+            $data['menu_ids'] = array_unique($data['menu_ids']);
+            $data['menu_ids'] = json_encode($data['menu_ids']);
+            if ($this->db->update('menu_alloc', $data, array('admin_id' => $id))) {
+                return TRUE;
+            } else {
+                return false;
+            }
+        } else {
+            if ($this->db->insert('menu_alloc', $data)) {
+                return TRUE;
+            } else {
+                return false;
+            }
+        }
+    }
+  public function view($id, $table) {
+        $this->db->select('*');
+        $this->db->from($table);
+        $this->db->where($id);
+        $query = $this->db->get()->row();
+        return $query;
+    }
+}

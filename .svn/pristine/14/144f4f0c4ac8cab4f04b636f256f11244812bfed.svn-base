@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/views/user/layout/main.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/angular-js/route.js</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/models/User_model.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/views/user/layout/header.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/views/templates/exam.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/controllers/Study_controller.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/views/user/index.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/ang-app/friends.html</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/controllers/Friends_controller.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/angular-js/angular.control.js</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/assets/js/ajax_func.js</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/ang-app/fbfriends.html</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/libraries/Site.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/ang-app/friendsearch.html</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/ang-app/profile.html</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/controllers/User_controller.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/views/user/layout/head.php</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/angular-js/services.js</file>
+            <file>file:/C:/xampp/htdocs/roughsheetn/application/core/MY_Controller.php</file>
+        </group>
+    </open-files>
+</project-private>

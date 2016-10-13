@@ -1,0 +1,524 @@
+<div ng-controller="profilecontrol">
+    <a ng-if='uid == fid && edit' ng-click="setEdit(0)" class='label label-info glass' style='background: #ff3333;float:right;font-size:14px; '>Cancel</a>
+    <a ng-if='uid == fid' ng-click="setEdit(1)" class='label label-info glass' style='float:right;font-size:14px; '>Edit Profile</a>
+    <div class="panel panel-default panel_profile">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><center><h3 class='panel-title'>Profile Info</h3></center></div>
+        <div class="panel-body">
+            <div class="row"><!--
+            <div class="col-md-3" >
+           <img class="media-object img-circle wow fadeIn" data-wow-delay="0.1s" src="app/includes/res_include.php" style="width:130px;border-bottom:solid 3px #37a8df;margin:10px auto;" alt="user">
+            </div>-->
+                <div class="col-md-10">
+                    <div class="col-md-12" ng-if="!show.privacy">
+                        <div class='panel' style='margin-bottom:30px;'>
+                            <table style='font-size:12px;margin-top:35px;"' class='table table-hover'>
+                                <tr>
+                                    <th>Name</th>
+                                    <td><span ng-show="(permission != '0' && 'UID_FirstName' | in_array:permission) || uid == fid">{{f.UID_FirstName}}</span> <span ng-show="(permission != '0' && 'UID_LastName' | in_array:permission) || uid == fid">{{f.UID_LastName}}</span><td>
+                                    <th ng-show="(permission != '0' && 'UID_gender' | in_array:permission) || uid == fid">Gender</th>
+                                    <td ng-show="(permission != '0' && 'UID_gender' | in_array:permission) || uid == fid">
+                                        <span ng-if='!personal'>{{f.UID_Gender}}</span>
+                                        <span ng-if='personal'>
+                                            <input type="radio" name='g' ng-model="f.UID_Gender" value="male" ng-checked="f.UID_Gender == 'male'">Male &nbsp;&nbsp;
+                                            <input type="radio" name='g'ng-model="f.UID_Gender" value="female" ng-checked="f.UID_Gender == 'female'"/>Female
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th ng-show="(permission != '0' && 'UID_CurrentCity' | in_array:permission) || uid == fid">Current city</th>
+                                    <td ng-show="(permission != '0' && 'UID_CurrentCity' | in_array:permission) || uid == fid">
+                                        <span ng-if='!personal'>{{f.UID_CurrentCity}}</span>
+                                        <span ng-if='personal'>
+                                            <input type="text" class="form-control input-sm" ng-model="f.UID_CurrentCity"/>
+                                        </span>
+                                    <td>
+                                    <th ng-show="(permission != '0' && 'UID_Hometown' | in_array:permission) || uid == fid">Home Town</th>
+                                    <td ng-show="(permission != '0' && 'UID_Hometown' | in_array:permission) || uid == fid">
+                                        <span ng-if='!personal'>{{f.UID_Hometown}}</span>
+                                        <span ng-if='personal'>
+                                            <input type="text" class="form-control input-sm" ng-model="f.UID_Hometown"/>
+                                        </span>
+                                    <td>
+                                </tr>
+                                <tr>
+                                    <th ng-show="(permission != '0' && 'UID_DOB' | in_array:permission) || uid == fid">Date of Birth</th>
+                                    <td ng-show="(permission != '0' && 'UID_DOB' | in_array:permission) || uid == fid">
+                                        <span ng-if='!personal'>{{f.UID_DOB}}</span>
+                                        <span ng-if='personal'>
+                                            <input type="text" class="form-control input-sm datepicker" ng-model="f.UID_DOB"/>
+                                        </span>
+                                    <td>
+                                    <th ng-show="(permission != '0' && 'UID_Email' | in_array:permission) || uid == fid">Email</th>
+                                    <td ng-show="(permission != '0' && 'UID_Email' | in_array:permission) || uid == fid">{{f.UID_Email}}<td>
+                                </tr>
+                                <tr>
+                                    <th ng-show="(permission != '0' && 'UID_CurrentInstitutionOrCompany' | in_array:permission) || uid == fid">Institution Or Company</th>
+                                    <td ng-show="(permission != '0' && 'UID_CurrentInstitutionOrCompany' | in_array:permission) || uid == fid">
+                                        <span ng-if='!personal'>{{f.UID_CurrentInstitutionOrCompany}}</span>
+                                        <span ng-if='personal'>
+                                            <input type="text"  class="form-control input-sm datepicker" ng-model="f.UID_CurrentInstitutionOrCompany"/>
+                                        </span>
+                                    <td>
+                                    <th ng-show="(permission != '0' && 'UID_Contact' | in_array:permission) || uid == fid">Contact</th>
+                                    <td ng-show="(permission != '0' && 'UID_Contact' | in_array:permission) || uid == fid">{{f.UID_Contact}}<td>
+                                </tr>
+                            </table>
+                        </div>
+                        <a ng-if='edit && !personal' id="edit_option" ng-click='setPersonal()' href="javascript:void(0)" style="float: right;">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                        </a>
+                        <div ng-if='edit && personal' id="profile_options" style="float: right;">
+                            <a class="btn btn-default" href="" ng-click="updatePer()">Save</a>
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <a class="btn btn-primary btn-block" role="button"  data-toggle="collapse" data-parent="#accordion" href="" data-target='#collapseOne'  aria-controls="collapseOne" ><center id='show_change'>Show More</center></a>
+                        <div class="clearfix"></div>
+
+                        <!--  basic info ends  -->
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body" style="background: #eeeeee;">
+                                <div class="row">
+                                    <h3 ng-if='othdata.prof_info'>Professional Info 
+                                        <div ng-if="edit" id="professional_area_plus" class="right_side">
+                                            <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="" style="float:right ;border-radius:24px;margin-right: 27px;margin-top: -17px" ng-click="othdata.prof_info.push({})" data-original-title="Add More">+</a>
+                                        </div>
+                                    </h3>
+                                    <div ng-show="(permission != '0' && 'prof_arr' | in_array:permission) || uid == fid" class='col-sm-6 company_box wow fadeInRight' ng-repeat="f in othdata.prof_info">
+                                        <div class='label c_badge'>
+                                            <span ng-if='!f.prof'>{{f.start_year}}</span>
+                                            <span ng-if='f.prof'>
+                                                <select id="dob_m" class='pull-right'  name='dob_m' ng-model="f.to_month" >
+                                                    <option value='0'>Month</option>
+                                                    <option value="{{m.val}}" ng-repeat="m in months">{{m.name}}</option>
+                                                </select>
+                                                <select id="dob_y" name='start_year' class='pull-right'  ng-model="f.to_year">
+                                                    <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                                </select>
+                                                <span class='pull-right'>To</span>
+                                                <select id="dob_m" class='pull-right' name='dob_m' ng-model="f.start_month" >
+                                                    <option value='0'>Month</option>
+                                                    <option value="{{m.val}}" ng-repeat="m in months">{{m.name}}</option>
+                                                </select>
+                                                <select id="dob_y" name='start_year' class='pull-right' ng-model="f.start_year">
+                                                    <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                                </select><span class='pull-right'>From</span>
+                                                <!--<input type="text"  class="form-control input-sm" ng-model="f.cname"/>-->
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            <!--style="background: #595959"-->
+                                            <div class="col-sm-12 profile_info" style="background: #8dccfa;" >
+                                                <img class="media-object img-circle img-responsive col-md-5 wow fadeIn" data-wow-delay="0.1s"
+                                                     src="assets/images/comp.png" style="border-bottom:solid 3px #37a8df;margin-left:26%;" alt="user">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <table class='table' style='font-size:13px;'>
+                                                    <tr>
+                                                        <td>Company:</td>
+                                                        <td>
+                                                            <span ng-if='!f.prof'>{{f.cname}}</span>
+                                                            <span ng-if='f.prof'>
+                                                                <input type="text"  class="form-control input-sm" ng-model="f.cname"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Location:</td>
+                                                        <td>
+                                                            <span ng-if='!f.prof'>{{f.cloc}}</span>
+                                                            <span ng-if='f.prof'>
+                                                                <input type="text"  class="form-control input-sm" ng-model="f.cloc"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Designation:</td>
+                                                        <td>
+                                                            <span ng-if='!f.prof'>{{f.desig}}</span>
+                                                            <span ng-if='f.prof'>
+                                                                <input type="text"  class="form-control input-sm" ng-model="f.desig"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Functional area:</td>
+                                                        <td>
+                                                            <span ng-if='!f.prof'>{{f.func_area}}</span>
+                                                            <span ng-if='f.prof'>
+                                                                <input type="text"  class="form-control input-sm" ng-model="f.func_area"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <a ng-if='edit && !f.prof' id="edit_option" ng-click='setProfession($index)' href="javascript:void(0)" style="float: right;">
+                                                    <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                                                </a>
+                                                &nbsp;&nbsp;
+                                                <a ng-if='edit && !f.prof' ng-click='deleteProfession($index)' href="javascript:void(0)" style="float: right;color:red">
+                                                    <span class="glyphicon glyphicon-delete" aria-hidden="true">Delete</span>
+                                                </a>
+                                                <div ng-if='edit && f.prof' id="profile_options" style="float: right;">
+                                                    <a class="btn btn-default" href="" ng-click="updateProf()">Save</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+
+                                </div>
+                                <div ng-show="(permission != '0' && 'academics' | in_array:permission) || uid == fid">
+                                <h3>Academics</h3>
+                                <div class='col-sm-12 company_box wow fadeInRight' ng-if='((othdata.academics[0] || othdata.academics[1] || othdata.academics[2] || othdata.academics[3] || othdata.academics[4]) && show.complete) || edit'>
+                                    <div class='label c_badge'>
+                                        <span ng-if='!acad[0]'>{{othdata.academics[3]}}</span>
+                                        <span ng-if='acad[0]'>
+                                            <select id="dob_y" name='start_year' class='pull-right'  ng-model="othdata.academics[3]">
+                                                <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                            </select>
+                                        </span>
+                                    </div>
+                                    <div class='row'><div class='col-sm-12 profile_info' style='background: #8dccfa;'>
+                                            <img class='media-object img-circle img-responsive col-md-3 wow fadeIn' data-wow-delay='0.1s'
+                                                 src='assets/images/degree.png' style='border-bottom:solid 3px #37a8df;margin-left:36%;'>
+                                        </div>
+                                    </div>
+                                    <div class='row'><div class='col-sm-12'>
+                                            <h4>Degree</h4>
+                                            <table style='font-size:12px;' class='table'>
+                                                <tr>
+                                                    <th>College</th>
+                                                    <td>
+                                                        <span ng-if='!acad[0]'>{{othdata.academics[0]}}</span>
+                                                        <span ng-if='acad[0]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[0]"/>
+                                                        </span></td>
+                                                    <th>Location</th>
+                                                    <td>
+                                                        <span ng-if='!acad[0]'>{{othdata.academics[1]}}</span>
+                                                        <span ng-if='acad[0]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[1]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Branch</th>
+                                                    <td><span ng-if='!acad[0]'>{{othdata.academics[2]}}</span>
+                                                        <span ng-if='acad[0]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[2]"/>
+                                                        </span></td>
+                                                    <th>Grade/Percentage</th>
+                                                    <td><span ng-if='!acad[0]'>{{othdata.academics[4]}}</span>
+                                                        <span ng-if='acad[0]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[4]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><a ng-if='edit && !acad[0]' id="" ng-click='setAcad(0)' href="javascript:void(0)" style="float: right;">
+                                                            <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                                                        </a>
+                                                        <div ng-if='edit && acad[0]' id="profile_options" style="float: right;">
+                                                            <a class="btn btn-default" href="" ng-click="updateAcad()">Save</a>
+                                                        </div></td>
+                                                </tr>
+                                            </table></div>
+                                        <hr/>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <br/>
+                                <div class='col-sm-12 company_box wow fadeInRight' ng-if='(othdata.academics[5] || othdata.academics[6] || othdata.academics[7] || othdata.academics[8] || othdata.academics[9]) || edit'>
+                                    <div class='label c_badge  wow fadeIn'><span ng-if='!acad[1]'>{{othdata.academics[8]}}</span>
+                                        <span ng-if='acad[1]'>
+                                            <select id="dob_y" name='start_year' class='pull-right'  ng-model="othdata.academics[8]">
+                                                <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                            </select>
+                                        </span></div>
+                                    <div class='row'>
+                                        <div class='col-sm-12 profile_info' style='background: #8dccfa;'>
+                                            <img class='media-object img-circle img-responsive col-md-3 wow fadeIn' data-wow-delay='0.1s'
+                                                 src='assets/images/degree.png'
+                                                 style='border-bottom:solid 3px #37a8df;margin-left:36%;'>
+                                        </div>
+                                    </div>
+                                    <div class='row'>
+                                        <div class='col-sm-12'>
+                                            <p><b>Diploma</b>
+                                            </p><table style='font-size:12px;' class='table'>
+                                                <tr>
+                                                    <th>College</th>
+                                                    <td><span ng-if='!acad[1]'>{{othdata.academics[5]}}</span>
+                                                        <span ng-if='acad[1]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[5]"/>
+                                                        </span></td>
+                                                    <th>Location</th>
+                                                    <td><span ng-if='!acad[1]'>{{othdata.academics[6]}}</span>
+                                                        <span ng-if='acad[1]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[6]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Branch</th>
+                                                    <td><span ng-if='!acad[1]'>{{othdata.academics[7]}}</span>
+                                                        <span ng-if='acad[1]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[7]"/>
+                                                        </span></td>
+                                                    <th>Grade/Percentage</th>
+                                                    <td><span ng-if='!acad[1]'>{{othdata.academics[9]}}</span>
+                                                        <span ng-if='acad[1]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[9]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td> <a ng-if='edit && !acad[1]' id="" ng-click='setAcad(1)' href="javascript:void(0)" style="float: right;">
+                                                            <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                                                        </a>
+                                                        <div ng-if='edit && acad[1]' id="profile_options" style="float: right;">
+                                                            <a class="btn btn-default" href="" ng-click="updateAcad()">Save</a>
+                                                        </div></td>
+                                                </tr>
+                                            </table></div>
+                                        <hr/>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <br/>
+                                <div class='col-sm-12 company_box wow fadeInRight' ng-if='(othdata.academics[10] || othdata.academics[11] || othdata.academics[12] || othdata.academics[13] || othdata.academics[14]) || edit'>
+                                    <div class='label c_badge wow fadeIn'><span ng-if='!acad[2]'>{{othdata.academics[13]}}</span>
+                                        <span ng-if='acad[2]'>
+                                            <select id="dob_y" name='start_year' class='pull-right'  ng-model="othdata.academics[13]">
+                                                <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                            </select>
+                                        </span></div>
+                                    <div class='row'>
+                                        <div class='col-sm-12 profile_info' style='background: #8dccfa;'>
+                                            <img class='media-object img-circle img-responsive col-md-3 wow fadeIn' data-wow-delay='0.1s'
+                                                 src='assets/images/school.png'
+                                                 style='border-bottom:solid 3px #37a8df;margin-left:36%;'>
+                                        </div>
+                                    </div>
+                                    <div class='row'>
+                                        <div class='col-sm-12'>
+                                            <p><b>XIIth</b></p>
+                                            <table style='font-size:12px;' class='table'>
+                                                <tr>
+                                                    <th>College</th>
+                                                    <td><span ng-if='!acad[2]'>{{othdata.academics[10]}}</span>
+                                                        <span ng-if='acad[2]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[10]"/>
+                                                        </span></td>
+                                                    <th>Location</th>
+                                                    <td><span ng-if='!acad[2]'>{{othdata.academics[11]}}</span>
+                                                        <span ng-if='acad[2]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[11]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Board</th>
+                                                    <td><span ng-if='!acad[2]'>{{othdata.academics[12]}}</span>
+                                                        <span ng-if='acad[2]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[12]"/>
+                                                        </span></td>
+                                                    <th>Grade/Percentage</th>
+                                                    <td><span ng-if='!acad[2]'>{{othdata.academics[14]}}</span>
+                                                        <span ng-if='acad[2]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[14]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><a ng-if='edit && !acad[2]' id="" ng-click='setAcad(2)' href="javascript:void(0)" style="float: right;">
+                                                            <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                                                        </a>
+                                                        <div ng-if='edit && acad[2]' id="profile_options" style="float: right;">
+                                                            <a class="btn btn-default" href="" ng-click="updateAcad()">Save</a>
+                                                        </div></td>
+                                                </tr>
+                                            </table></div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <br/>
+                                <div class='col-sm-12 company_box wow fadeInRight' ng-if='(othdata.academics[15] || othdata.academics[16] || othdata.academics[17] || othdata.academics[18] || othdata.academics[19]) || edit'>
+                                    <div class='label c_badge  wow fadeIn'><span ng-if='!acad[3]'>{{othdata.academics[18]}}</span>
+                                        <span ng-if='acad[3]'>
+                                            <select id="dob_y" name='start_year' class='pull-right'  ng-model="othdata.academics[18]">
+                                                <option value="{{y}}" ng-repeat="y in [] | daterange:'50'">{{y}}</option>
+                                            </select>
+                                        </span></div>
+                                    <div class='row'>
+                                        <div class='col-sm-12 profile_info' style='background: #8dccfa;'>
+                                            <img class='media-object img-circle img-responsive col-md-3 wow fadeIn' data-wow-delay='0.1s'
+                                                 src='assets/images/school.png'
+                                                 style='border-bottom:solid 3px #37a8df;margin-left:36%;'>
+                                        </div>
+                                    </div>
+                                    <div class='row'>
+                                        <div class='col-sm-12'>
+                                            <p><b>Xth</b></p>
+                                            <table style='font-size:12px;' class='table'>
+                                                <tr>
+                                                    <th>School</th>
+                                                    <td><span ng-if='!acad[3]'>{{othdata.academics[15]}}</span>
+                                                        <span ng-if='acad[3]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[15]"/>
+                                                        </span></td>
+                                                    <th>Location</th>
+                                                    <td><span ng-if='!acad[3]'>{{othdata.academics[16]}}</span>
+                                                        <span ng-if='acad[3]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[16]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Board</th>
+                                                    <td><span ng-if='!acad[3]'>{{othdata.academics[17]}}</span>
+                                                        <span ng-if='acad[3]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[17]"/>
+                                                        </span></td>
+                                                    <th>Grade/Percentage</th>
+                                                    <td><span ng-if='!acad[3]'>{{othdata.academics[19]}}</span>
+                                                        <span ng-if='acad[3]'>
+                                                            <input type="text"  class="form-control input-sm" ng-model="othdata.academics[19]"/>
+                                                        </span><td>
+                                                </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><a ng-if='edit && !acad[3]' id="" ng-click='setAcad(3)' href="javascript:void(0)" style="float: right;">
+                                                            <span class="glyphicon glyphicon-edit" aria-hidden="true">Edit</span>
+                                                        </a>
+                                                        <div ng-if='edit && acad[3]' id="profile_options" style="float: right;">
+                                                            <a class="btn btn-default" href="" ng-click="updateAcad()">Save</a>
+                                                        </div></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <br/>
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" ng-if="show.privacy">
+                        <form class="form-horizontal" ng-submit="privacySave()">
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">Primary Information:</label>
+                                <div class="col-sm-9">
+                                    <!--<input type="checkbox" value="fname" ng-model="setting.primary">-->
+                                    <ul class="list-inline">
+                                        <li class="list-group-item col-md-6">
+                                            <b>First Name</b>  : <input type="checkbox" ng-checked="select.indexOf('UID_FirstName') > - 1 || setting.public.indexOf('UID_FirstName') > - 1" ng-click="publicprivacy('UID_FirstName')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_FirstName') > - 1 || setting.private.indexOf('UID_FirstName') > - 1" ng-click="privateprivacy('UID_FirstName')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Last Name</b> : <input type="checkbox" ng-checked="select.indexOf('UID_LastName') > - 1 || setting.public.indexOf('UID_LastName') > - 1" ng-click="publicprivacy('UID_LastName')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_LastName') > - 1 || setting.private.indexOf('UID_LastName') > - 1" ng-click="privateprivacy('UID_LastName')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Gender</b> : <input type="checkbox" ng-checked="select.indexOf('UID_Gender') > - 1 || setting.public.indexOf('UID_Gender') > - 1" ng-click="publicprivacy('UID_Gender')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_Gender') > - 1 || setting.private.indexOf('UID_Gender') > - 1" ng-click="privateprivacy('UID_Gender')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Current City</b> : <input type="checkbox" ng-checked="select.indexOf('UID_CurrentCity') > - 1 || setting.public.indexOf('UID_CurrentCity') > - 1" ng-click="publicprivacy('UID_CurrentCity')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_CurrentCity') > - 1 || setting.private.indexOf('UID_CurrentCity') > - 1" ng-click="privateprivacy('UID_CurrentCity')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Home Town</b> : <input type="checkbox" ng-checked="select.indexOf('UID_Hometown') > - 1 || setting.public.indexOf('UID_Hometown') > - 1" ng-click="publicprivacy('UID_Hometown')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_Hometown') > - 1 || setting.private.indexOf('UID_Hometown') > - 1" ng-click="privateprivacy('UID_Hometown')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Institution Or Company</b> : <input type="checkbox" ng-checked="select.indexOf('UID_CurrentInstitutionOrCompany') > - 1 || setting.public.indexOf('UID_CurrentInstitutionOrCompany') > - 1" ng-click="publicprivacy('UID_CurrentInstitutionOrCompany')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_CurrentInstitutionOrCompany') > - 1 || setting.private.indexOf('UID_CurrentInstitutionOrCompany') > - 1" ng-click="privateprivacy('UID_CurrentInstitutionOrCompany')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Date Of Birth</b> : <input type="checkbox" ng-checked="select.indexOf('UID_DOB') > - 1 || setting.public.indexOf('UID_DOB') > - 1" ng-click="publicprivacy('UID_DOB')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_DOB') > - 1 || setting.private.indexOf('UID_DOB') > - 1" ng-click="privateprivacy('UID_DOB')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Contact No</b>: <input type="checkbox" ng-checked="select.indexOf('UID_Contact') > - 1 || setting.public.indexOf('UID_Contact') > - 1" ng-click="publicprivacy('UID_Contact')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_Contact') > - 1 || setting.private.indexOf('UID_Contact') > - 1" ng-click="privateprivacy('UID_Contact')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Email</b>: <input type="checkbox" ng-checked="select.indexOf('UID_Email') > - 1 || setting.public.indexOf('UID_Email') > - 1" ng-click="publicprivacy('UID_Email')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_Email') > - 1 || setting.private.indexOf('UID_Email') > - 1" ng-click="privateprivacy('UID_Email')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Profile Pic</b>: <input type="checkbox" ng-checked="select.indexOf('UID_Pro_Pic') > - 1 || setting.public.indexOf('UID_Pro_Pic') > - 1" ng-click="publicprivacy('UID_Pro_Pic')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('UID_Pro_Pic') > - 1 || setting.private.indexOf('UID_Pro_Pic') > - 1" ng-click="privateprivacy('UID_Pro_Pic')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Facebook Link</b>: <input type="checkbox" ng-checked="select.indexOf('fb_link') > - 1 || setting.public.indexOf('fb_link') > - 1" ng-click="publicprivacy('fb_link')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('fb_link') > - 1 || setting.private.indexOf('fb_link') > - 1" ng-click="privateprivacy('fb_link')">&nbsp;&nbsp;Private
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-3 control-label">Secundery Information:</label>
+                                <div class="col-sm-9">
+                                    <!--<input type="checkbox" value="fname" ng-model="setting.primary">-->
+                                    <ul class="list-inline">
+                                        <li class="list-group-item col-md-6">
+                                            <b>Professional Details: </b>: <input type="checkbox" ng-checked="select.indexOf('prof_arr') > - 1 || setting.public.indexOf('prof_arr') > - 1" ng-click="publicprivacy('prof_arr')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('prof_arr') > - 1 || setting.private.indexOf('prof_arr') > - 1" ng-click="privateprivacy('prof_arr')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Education Qualification Details: </b>: <input type="checkbox" ng-checked="select.indexOf('academics') > - 1 || setting.public.indexOf('academics') > - 1" ng-click="publicprivacy('academics')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('academics') > - 1 || setting.private.indexOf('academics') > - 1" ng-click="privateprivacy('academics')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Ranking Details: </b>: <input type="checkbox" ng-checked="select.indexOf('ranking') > - 1 || setting.public.indexOf('ranking') > - 1" ng-click="publicprivacy('ranking')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('ranking') > - 1 || setting.private.indexOf('ranking') > - 1" ng-click="privateprivacy('ranking')">&nbsp;&nbsp;Private
+                                        </li>
+                                        <li class="list-group-item col-md-6">
+                                            <b>Performance Details: </b>: <input type="checkbox" ng-checked="select.indexOf('performance') > - 1 || setting.public.indexOf('performance') > - 1" ng-click="publicprivacy('performance')">&nbsp;&nbsp;Public
+                                            <input type="checkbox" ng-checked="select.indexOf('performance') > - 1 || setting.private.indexOf('performance') > - 1" ng-click="privateprivacy('performance')">&nbsp;&nbsp;Private
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-default">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="list-group">
+                        <a href="" ng-click="setActive(this, 'complete')" class="list-group-item profilelist active">Complete</a>
+                        <a href="" ng-click="setActive(this, 'professional')" class="list-group-item profilelist">PROFESSIONAL</a>
+                        <a href="" ng-click="setActive(this, 'acadmic')" class="list-group-item profilelist">ACADEMIC</a>
+                        <a href="" ng-click="setActive(this, 'achievement')" class="list-group-item profilelist">ACHIEVEMENTS</a>
+                        <a href="" ng-click="setActive(this, 'certificates')" class="list-group-item profilelist">CERTIFICATES</a>
+                        <a href="" ng-click="setActive(this, 'social')" class="list-group-item profilelist">SOCIAL WORK</a>
+                        <a href="" ng-click="setActive(this, 'extraca')" class="list-group-item profilelist">EXTRA CURRICULAR ACTIVITIES</a>
+                        <a href="" ng-click="setActive(this, 'sports')" class="list-group-item profilelist">SPORTS</a>
+                        <a href="" ng-click="setActive(this, 'documents')" class="list-group-item profilelist">DOCUMENTS</a>
+                        <a href="" ng-if="uid == fid" ng-click="setActive(this, 'privacy')" class="list-group-item profilelist">Privacy Setting</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

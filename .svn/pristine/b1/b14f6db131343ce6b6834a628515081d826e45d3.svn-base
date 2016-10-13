@@ -1,0 +1,287 @@
+body {
+    font-family: Tahoma,Arial,Verdana;
+    font-size: 12px;
+    color: black;
+}
+.msgerror{background-color: #e21728;color: #fff;text-align: center;font-size: 16px;}
+.msgsuccess{background-color: #1b8827;color: #fff;text-align: center;font-size: 16px;}
+.errorspan{z-index: 99999;position: absolute;top: 10px;left: 100%;}
+.ajax_loding{z-index: 1000;position: fixed;width: 100%;height: 100%;background-color: #fff;opacity: 0.9;}
+.ajax-loader{position:absolute;top:50%;left:50%;z-index:9999999;}
+.bwizard-steps {
+    display: inline-block;
+    margin: 0; 
+    padding: 0;
+    background: #fff; 
+}
+
+.bwizard-steps .active {
+    color: #fff;
+    background: #007ACC; 
+}
+
+.bwizard-steps .active:after {
+    border-left-color: #007ACC; 
+}
+
+.bwizard-steps .active a {
+    color: #fff;
+    cursor: default;
+}
+
+.bwizard-steps .label {
+    position: relative;
+    top: -1px;
+    margin: 0 5px 0 0; 
+    padding: 1px 5px 2px; 
+}
+
+.bwizard-steps .active .label {
+    background-color: #333;
+}
+
+.bwizard-steps li {
+    display: inline-block; 
+    position: relative;
+    margin-right: 5px;
+    padding: 12px 17px 10px 30px;
+    *display: inline;
+    *padding-left: 17px;
+    background: #efefef;
+    line-height: 18px;
+    list-style: none;
+    zoom: 1; 
+}
+
+.bwizard-steps li:first-child {
+    padding-left: 12px;
+    -moz-border-radius: 4px 0 0 4px;
+    -webkit-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px; 
+}
+
+.bwizard-steps li:first-child:before {
+    border: none;
+}
+
+.bwizard-steps li:last-child {
+    margin-right: 0;
+    -moz-border-radius: 0 4px 4px 0;
+    -webkit-border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0; 
+}
+
+.bwizard-steps li:last-child:after {
+    border: none;
+}
+
+.bwizard-steps li:before {
+    position: absolute;
+    left: 0; top: 0;
+    height: 0; width: 0;
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #fff;
+    border-top: 20px inset transparent;
+    content: "";
+}
+
+.bwizard-steps li:after {
+    position: absolute;
+    right: -20px; top: 0;
+    height: 0; width: 0;
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #efefef;
+    border-top: 20px inset transparent;
+    content: "";
+    z-index: 2; 
+}
+
+.bwizard-steps a {
+    color: #333; 
+}
+
+.bwizard-steps a:hover {
+    text-decoration: none;
+}
+
+.bwizard-steps.clickable li:not(.active) {
+    cursor: pointer;
+}
+
+.bwizard-steps.clickable li:hover:not(.active) {
+    background: #ccc;
+}
+
+.bwizard-steps.clickable li:hover:not(.active):after {
+    border-left-color: #ccc; 
+}
+
+.bwizard-steps.clickable li:hover:not(.active) a {
+    color: #08c; 
+}
+
+@media (max-width: 480px) { 
+    /* badges only on small screens */
+    .bwizard-steps li:after,
+    .bwizard-steps li:before {
+        border: none; 
+    }
+
+    .bwizard-steps li,
+    .bwizard-steps li.active,
+    .bwizard-steps li:first-child,
+    .bwizard-steps li:last-child {
+        margin-right: 0;
+        padding: 0;
+        background-color: transparent; 
+    }
+}
+.wizard {
+    margin: 20px auto;
+    background: #fff;
+}
+
+.wizard .nav-tabs {
+    position: relative;
+    margin: 40px auto;
+    margin-bottom: 0;
+    border-bottom-color: #e0e0e0;
+}
+
+.wizard > div.wizard-inner {
+    position: relative;
+}
+
+.connecting-line {
+    height: 2px;
+    background: #e0e0e0;
+    position: absolute;
+    width: 80%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+    z-index: 1;
+}
+
+.wizard .nav-tabs > li.active > a, .wizard .nav-tabs > li.active > a:hover, .wizard .nav-tabs > li.active > a:focus {
+    color: #555555;
+    cursor: default;
+    border: 0;
+    border-bottom-color: transparent;
+}
+
+span.round-tab {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    display: inline-block;
+    border-radius: 100px;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    z-index: 2;
+    position: absolute;
+    left: 0;
+    text-align: center;
+    font-size: 25px;
+}
+span.round-tab i{
+    color:#555555;
+}
+.wizard li.active span.round-tab {
+    background: #fff;
+    border: 2px solid #5bc0de;
+
+}
+.wizard li.active span.round-tab i{
+    color: #5bc0de;
+}
+
+span.round-tab:hover {
+    color: #333;
+    border: 2px solid #333;
+}
+
+.wizard .nav-tabs > li {
+    width: 25%;
+}
+
+.wizard li:after {
+    content: " ";
+    position: absolute;
+    left: 46%;
+    opacity: 0;
+    margin: 0 auto;
+    bottom: 0px;
+    border: 5px solid transparent;
+    border-bottom-color: #5bc0de;
+    transition: 0.1s ease-in-out;
+}
+
+.wizard li.active:after {
+    content: " ";
+    position: absolute;
+    left: 46%;
+    opacity: 1;
+    margin: 0 auto;
+    bottom: 0px;
+    border: 10px solid transparent;
+    border-bottom-color: #5bc0de;
+}
+
+.wizard .nav-tabs > li a {
+    width: 70px;
+    height: 70px;
+    margin: 20px auto;
+    border-radius: 100%;
+    padding: 0;
+}
+
+.wizard .nav-tabs > li a:hover {
+    background: transparent;
+}
+
+.wizard .tab-pane {
+    position: relative;
+    padding-top: 50px;
+}
+
+.wizard h3 {
+    margin-top: 0;
+}
+
+@media( max-width : 585px ) {
+
+    .wizard {
+        width: 90%;
+        height: auto !important;
+    }
+
+    span.round-tab {
+        font-size: 16px;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+    }
+
+    .wizard .nav-tabs > li a {
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+    }
+
+    .wizard li.active:after {
+        content: " ";
+        position: absolute;
+        left: 35%;
+    }
+}
+.c_badge {
+    background: #eeeeee none repeat scroll 0 0;
+    box-shadow: 0 0 10px #eee;
+    color: #494949;
+    float: right;
+    font-size: 14px;
+    margin-right: -14px;
+    margin-top: -22px;
+}

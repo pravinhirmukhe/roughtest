@@ -1,0 +1,101 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Admin_model
+ *
+ * @author Pravinkumar
+ */
+class Admin_model extends MY_Model {
+
+    //put your code here
+    public function __construct() {
+        parent::__construct();
+    }
+
+
+
+    public function get_alluser() {
+        $res = $this->db->get_where('register', array('status' => 'Active'))->result();
+        return $res;
+    }
+    public function get_UserGroup() {
+        $res = $this->db->get_where('users', array('id' => $this->session->userdata('user_id')))->row();
+        return $res;
+    }
+    public function getTopics(){
+         return $this->getResult($this->db->select('topic_id,topic_name')->get('rs_sub_topics_23052015'));
+    }
+    public function getTopicBySubId($id){
+        return $this->getResult($this->db->get_where('rs_sub_topics_23052015', array('sub_id' => $id)));
+    }
+    public function getSubjects(){
+         return $this->getResult($this->db->select('sub_id,sub_name')->get('rs_subjects_1423552512'));
+    }
+    public function getQuestionType(){
+        return $this->getResult($this->db->select('id,type')->get('rs_qtype_31052015'));
+    }
+    
+    public function saveKeyConcepts($data) {
+        if ($this->db->insert('rs_key_concepts_27062015', $data)) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    public function saveExercise($data){
+         if ($this->db->insert('rs_questions_db_24052015', $data)) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    public function getKeyConceptsById($id){
+        return $this->getResult($this->db->get_where('rs_key_concepts_27062015', array('kc_id' => $id)));
+    }
+    public function updateKeyConcept($data, $id) {
+        if ($this->db->update('rs_key_concepts_27062015', $data, array('kc_id' => $id))) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    public function getexerciseId($id){
+        return $this->getResult($this->db->get_where('rs_questions_db_24052015', array('id' => $id)));
+    
+    }
+    public function updateExercise($data,$id){
+        if ($this->db->update('rs_questions_db_24052015', $data, array('id' => $id))) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    
+    public function getQuestionCount($id){
+        return $this->getResult($this->db->select('count(id) as total,topic_id')->get_where('rs_questions_db_24052015', array('topic_id' => $id)));
+    }
+    
+    public function checkKeyConcept($id){
+        return $this->getResult($this->db->select('kc_id')->get_where('rs_key_concepts_27062015', array('topic_id' => $id)));
+    }
+    public function getMonthWiseUserData(){
+        $query = $this->db->query("SELECT count(UID) as total_users,MONTHNAME(create_date) as month FROM rs_user_info_1423552512 WHERE YEAR(create_date) = YEAR(current_date) group by  MONTH(create_date)");
+        return $query->result_array();
+    }
+    public function getWeekWiseUserData(){
+        $query = $this->db->query("SELECT count(UID) as total_users,DAYNAME(create_date) as day FROM rs_user_info_1423552512 WHERE  YEARWEEK(`create_date`, 1) = YEARWEEK(CURDATE(), 1) group by DAYNAME(create_date)");
+        return $query->result_array();
+    }
+    public function getdayWiseUserData(){
+        $query = $this->db->query("SELECT count(UID) as total_users,create_date,DAYNAME(create_date) as day FROM rs_user_info_1423552512 WHERE  DATE(create_date) = CURDATE() group by DAYNAME(create_date)");
+        return $query->result_array();
+    }
+    
+    
+}

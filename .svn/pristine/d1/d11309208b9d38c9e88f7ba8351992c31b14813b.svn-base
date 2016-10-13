@@ -1,0 +1,63 @@
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="content-main">
+        <?php $this->load->view('admin/layout/breadcrumb') ?>
+        
+        <div class="content-top">
+          
+            <?php if(isset($subjects)){?>
+             
+            <div class="col-md-5 ">
+                <div class="content-top-1">
+                    <div class="col-md-8 top-content">
+                            <h5><?php echo $subjects[0]->sub_name; ?></h5>
+                          <?php for($i=0;$i<count($topic[0]);$i++){?>
+                          <label style ="font-size: 15px !important;"><?php echo $topic[0][$i]->topic_name;?></label>
+                          <?php } ?>
+                    </div>
+                    
+                     <div class="clearfix"> </div>
+                </div>
+                <div class="content-top-1">
+                    <div class="col-md-8 top-content">
+                            <h5><?php echo $subjects[1]->sub_name; ?></h5>
+                          <?php for($i=0;$i<count($topic[1]);$i++){?>
+                          <label style ="font-size: 15px !important;"><?php echo $topic[1][$i]->topic_name;?></label>
+                          <?php } ?>
+                    </div>
+                    
+                     <div class="clearfix"> </div>
+                </div>
+                <div class="content-top-1">
+                    <div class="col-md-8 top-content">
+                          <h5><?php echo $subjects[2]->sub_name; ?></h5>
+                          <?php for($i=0;$i<count($topic[2]);$i++){?>
+                          <label style ="font-size: 15px !important;"><?php echo $topic[2][$i]->topic_name;?></label>
+                          <?php } ?>
+                    </div>
+                    
+                     <div class="clearfix"> </div>
+                </div>
+                <div class="content-top-1">
+                    <div class="col-md-6 top-content">
+                            <h5><?php echo $subjects[3]->sub_name; ?></h5>
+                            <label>8761</label>
+                    </div>
+                    <div class="col-md-6 top-content1">	   
+                           
+                    </div>
+                     <div class="clearfix"> </div>
+                </div>
+            </div>
+            <?php } ?>
+            
+            <div class="clearfix">
+               
+                  
+
+            </div>
+            <?php $this->load->view('admin/layout/footer'); ?>
+        </div>
+             
+    </div>
+    <div class="clearfix"></div>
+</div>

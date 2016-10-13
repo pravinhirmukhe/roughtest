@@ -1,0 +1,5 @@
+Green - R- 38, G-176, B-97. #26b061
+Yellow - R-255, G-191, B-0. #ffbf00
+Blue - R-53, G-168, B-224. #35a8e0
+Red - R-255, G-71, B-19. #ff4713
+Gray - R-77, G-77, B-79. #4d4d4f

@@ -1,0 +1,27 @@
+
+<div ng-controller="dppcontrol">
+    <style type="text/css">.sm_color2{background-color:#fff !important;color:#25af60 !important;outline: dashed 2px #d4d4d4 !important;}
+        .active-home{background:#fff;border:none;}
+        .active-friends{background:#fff;border:none;}
+        .active-profile{background:#fff;border:none;}</style>
+    <div class='panel panel-default glass' style='border-color:#25af60;'>
+        <div class='panel-heading glass' style='background:#25af60;color:#fff'><h3 class='panel-title'><center>Today’s Daily Practice Problem Sheets</center></h3></div>
+        <div class='panel-body'>
+            <ul class='list-group' ng-if="tdpps.s == '1'">
+                <li ng-repeat="d in tdpps.sub" class='panel-heading' style='font-size:16px;list-style: none;width:100%;border-radius:4px;border:1px #eee solid;padding-left:20px;cursor:pointer;padding:8px;margin-bottom:3px;padding-left:15px;'><a data-toggle='modal' style='color:#333;' data-target='.exam_inst' ng-click='instructionsDppTpp("DPP", d.sub_id)'>{{d.sub_name}}</a></li>
+            </ul>
+            <div ng-if="!tdpps.tp" class='alert alert-info' style='font-size:18px;'><center><p>No pending Daily Practice Problem Sheets.</p></center></div>
+            <div ng-if="tdpps.s == '0'" class='alert alert-info' style='font-size:18px;'><center><p>No pending Topic Practice Problem Sheets.</p></center></div>
+        </div>
+    </div>
+    <div class='panel panel-default glass' style='border-color:#25af60;'>
+        <div class='panel-heading glass' style='background: #25af60;color:#fff;'><h3 class='panel-title'><center>Today’s Topic Practice Problem Sheets</center></h3></div>
+        <div class='panel-body'>
+            <ul class='list-group' ng-if="tpp.s == '1'">
+                <li ng-repeat="t in tpp.tpp" class='panel-heading' style='font-size:16px;list-style: none;width:100%;border-radius:4px;border:1px #eee solid;padding-left:20px;cursor:pointer;padding:8px;margin-bottom:3px;padding-left:15px;'><a data-toggle='modal' style='color:#333;' data-target='.exam_inst' ng-click='instructionsDppTpp("TPP", t.tid)'>{{t.tname}}</a></li>
+            </ul>
+            <div ng-if="!tpp.exam_count"class='alert alert-info' style='font-size:18px;'><center><p>No pending Topic Practice Problem Sheets.</p></center></div>
+            <div ng-if="tpp.s == '0'" class='alert alert-info'  style='font-size:18px;'><center><p>You haven't read any topic yet.</p></center></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div ng-controller="firendsearch">
+    <style>
+        .f_pic{border-top:solid 2px #febf10;
+               border-bottom:2px solid #37a8df;
+               border-left:2px solid #fc6f4b;
+               border-right:2px solid #25af60;border-radius:50px;background: #eee ;}
+        </style>
+        <div class='panel panel-primary'>
+        <div class='panel-heading'>
+            <h3 class='panel-title'>
+                <center>Search Results</center>
+            </h3>
+        </div>
+        <div class='panel-body'>
+            <div ng-if="fs.s == '0'" class='col-md-6' ng-bind-html="fs.msg">
+            </div>
+            <div ng-if="fs.s == '1'" ng-repeat="f in fs.data"class='media col-md-6' style='padding:0px;background:#fff;box-shadow:0 0 10px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                <div class='media-left'>
+                    <img class='media-object f_pic wow rotateIn' src='{{fs.imgpath}}{{f.UID_Pro_Pic}}' width='84' height='84'>
+                </div>
+                <div class='media-body wow rollIn' style='padding:3px;'>
+                    <a href='#/profile/{{f.UID}}'><h4 class='media-heading'>{{f.UID_FirstName + " " + f.UID_MiddleName + " " + f.UID_LastName}}</h4></a>
+                    <div id='button_{{f.UID}}'>
+                        <span ng-if="f.UID | in_array:fs.ef_arr">
+                            <a href='#/profile/{{f.UID}}'><button class='btn btn-default'>View Profile</button></a><a href=# ng-click='unfriend(f.UID)'><button class='btn btn-default'>Unfriend</button></a>
+                        </span>
+                        <span ng-if="f.UID | in_array:fs.fr_arr">
+                            <button class='btn btn-default' ng-click='confirmed(f.UID)'>Confirm Request</button><button class='btn btn-default' ng-click='reject(f.UID)'>Reject Request</button>
+                        </span>
+                        <span ng-if="f.UID | in_array:fs.sfr_arr">
+                            <button class='btn btn-default' disabled >Request Sent</button>
+                        </span>
+                        <span ng-if="!(f.UID | in_array:fs.ef_arr) && !(f.UID | in_array:fs.fr_arr) && !(f.UID | in_array:fs.sfr_arr)">
+                            <button class='btn btn-default' ng-click="addfriend(f.UID)">Add Friend</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

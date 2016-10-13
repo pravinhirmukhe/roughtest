@@ -1,0 +1,370 @@
+<?php
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Study_controller
+ *
+ * @author Pravinkumar
+ */
+class Study_controller extends MY_Controller {
+
+//put your code here
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function getSubjects() {
+        $rs = $this->db->get(SUBJECTS);
+        $rss = array();
+        if ($rs->num_rows() > 0) {
+            $i = 0;
+            foreach ($rs->result() as $r) {
+                $rss[$i] = $r;
+                $top = $this->db->get_where(TOPICS, array('sub_id' => $r->sub_id))->result();
+                $rss[$i]->topics = $top;
+                $i++;
+            }
+        }
+        echo json_encode($rss);
+    }
+
+    public function setKC() {
+        $subid = $_POST['subid'];
+        $topicid = $_POST['topicid'];
+        $this->session->set_userdata('topic_id', $topicid);
+        $id_chk = $this->db->select('sub_name')->get_where(SUBJECTS, array('sub_id' => $subid));
+        if ($id_chk->num_rows()) {
+            $data = (array) $id_chk->row();
+            $topicid_chk = $this->db->select('topic_name')->get_where(TOPICS, array('topic_id' => $topicid));
+            if ($topicid_chk->num_rows() == 1) {
+                $topic_data = (array) $topicid_chk->row();
+                $content = htmlspecialchars_decode($this->site->getKc($topicid), ENT_QUOTES);
+                $modified_str = str_replace('tinymce', 'assets/tinymce', $content);
+                $modified_str = str_replace('../assets', 'assets', $modified_str);
+                echo json_encode(array('s' => '1', 'sub_name' => strtoupper($data['sub_name']), 'topic_name' => $topic_data['topic_name'], 'content' => $modified_str, 'subid' => $subid, 'tid' => $topicid));
+            } else {
+                echo json_encode(array('s' => '0', 'msg' => "NO SUCH TOPIC"));
+            }
+        } else {
+            echo json_encode(array('s' => '0', 'msg' => "NO SUCH SUBJECT"));
+        }
+    }
+
+    public function setInstr() {
+        echo $this->load->view('templates/instructions', array('val' => $_POST['ex_type']), true);
+    }
+
+    public function getExam($no = 0) {
+        setShadow();
+        $subid = $_POST['subid'];
+        $topicid = $_POST['topicid'];
+        $_SESSION['topic_id'] = $topicid;
+        $ex_type = $_POST['ex_type'];
+        $id_chk = $this->db->get_where(SUBJECTS, array('sub_id' => $subid));
+//        $id_chk = mysql_query("Select * from " . SUBJECTS . " Where sub_id='$subid'") or die(mysql_error());
+//        $count = mysql_num_rows($id_chk);
+        if ($id_chk->num_rows() == 1) {
+            $data = $id_chk->row();
+            $topicid_chk = $this->db->get_where(TOPICS, array('topic_id' => $topicid));
+//            $topicid_chk = mysql_query("Select * from " . TOPICS . " Where topic_id='$topicid'") or die(mysql_error());
+//            $topicid_count = mysql_num_rows($topicid_chk);
+            if ($topicid_chk->num_rows() == 1) {
+                $topic_data = $topicid_chk->row();
+                echo"<div class='panel panel-default panel_custom'>
+        <div class='panel-heading'><div class='panel-title'>" . strtoupper($data->sub_name) . " / " . strtoupper($topic_data->topic_name) . " / EXERCISE $ex_type</div></div>";
+
+
+                $data = array(
+                    'subname' => strtoupper($data->sub_name),
+                    'topic_name' => strtoupper($topic_data->topic_name),
+                    'subid' => $subid,
+                    'topicid' => $topicid,
+                    'ex_type' => $ex_type,
+                    'qno' => $no,
+                    'sub' => 1
+                );
+                $this->load->view('templates/exam', $data);
+            } else {
+                echo"NO SUCH TOPIC";
+            }
+        } else {
+            echo "NO SUCH SUBJECT";
+        }
+    }
+
+    public function directQ() {
+        setShadow();
+        $id = $_POST['ansForQid'];
+        $ans_arr = $this->session->userdata('ans_arr');
+        $ans_arr[$id] = $_POST['op'];
+        $this->session->set_userdata('ans_arr', $ans_arr);
+////printing data
+//        echo "<div class='panel panel-default panel_custom'>
+//        <div class='panel-heading'><div class='panel-title'>";
+//        if (isset($_SESSION['test_type'])) {
+//            $topicid_chk = mysql_query("Select * from " . TOPICS . " Where topic_id='$_SESSION[topic_id]'") or die(mysql_error());
+//            $topic_data = mysql_fetch_assoc($topicid_chk);
+//            echo "DPP : " . strtoupper($topic_data['topic_name']) . "</div></div>";
+//            $exam_mod_enable = "YES";
+//            require ext_file_include('dpp_mod', 'res_2_sector');
+//        } else {
+        $id_chk = $this->db->get_where(SUBJECTS, array('sub_id' => $this->session->userdata('subid')));
+        $data = $id_chk->row();
+        $topicid_chk = $this->db->get_where(TOPICS, array('topic_id' => $this->session->userdata('topicid')));
+        $topic_data = $topicid_chk->row();
+        echo"<div class='panel panel-default panel_custom'>
+        <div class='panel-heading'><div class='panel-title'>" . strtoupper($data->sub_name) . " / " . strtoupper($topic_data->topic_name) . " / EXERCISE $ex_type</div></div>";
+
+        $data = array(
+            'subname' => strtoupper($data->sub_name),
+            'topic_name' => strtoupper($topic_data->topic_name),
+            'ex_type' => $this->session->userdata('ex_type'),
+            'qno' => $_POST['qid']
+        );
+        $this->load->view('templates/exam', $data);
+    }
+
+    function getQ() {
+        setShadow();
+        //to continue exam we set up a label here
+//        CONTINUE_EXAM:
+        //setting session variables
+        //Unattempted - U
+        $limit = $this->session->userdata('limit');
+        $ans_arr = $this->session->userdata('ans_arr');
+        if ($_POST['type'] == 'next') {
+            if ($_POST['qid'] == 0) {
+                $limit = $limit - 1;
+                $ans_arr[$limit] = $_POST['op'];
+            } elseif ($_POST['qid'] < 0) {
+                $_POST['qid'] == 0;
+                $limit = $limit - 1;
+                $ans_arr[$limit] = $_POST['op'];
+            } elseif ($_POST['qid'] > $limit - 1) {
+                $_POST['qid'] == 0;
+            } else {
+                $setAnsFor = $_POST['qid'] - 1;
+                $ans_arr[$setAnsFor] = $_POST['op'];
+            }
+        } elseif ($_POST['type'] == 'previous') {
+            if ($_POST['qid'] == 0) {
+                $ans_arr[1] = $_POST['op'];
+            } elseif ($_POST['qid'] < 0 || $_POST['qid'] > $limit - 1) {
+                $_POST['qid'] == 0;
+                //   $limit=$_SESSION['limit']-1;
+                //   $ans_arr[$limit]=$_POST['op'];
+            } else {
+                $setAnsFor = $_POST['qid'] + 1;
+                $ans_arr[$setAnsFor] = $_POST['op'];
+            }
+        }
+        $this->session->set_userdata('ans_arr', $ans_arr);
+        $this->session->set_userdata('limit', $limit);
+        //printing data
+//        echo "<div class='panel panel-default panel_custom'>
+//        <div class='panel-heading'><div class='panel-title'>";
+//        if (isset($_SESSION['test_type'])) {
+//            $topicid_chk = mysql_query("Select * from " . TOPICS . " Where topic_id='$_SESSION[topic_id]'") or die(mysql_error());
+//            $topic_data = mysql_fetch_assoc($topicid_chk);
+//            echo "DPP : " . strtoupper($topic_data['topic_name']) . "</div></div>";
+//            $exam_mod_enable = "YES";
+//            require ext_file_include('dpp_mod', 'res_2_sector');
+//        } else {
+
+        $id_chk = $this->db->get_where(SUBJECTS, array('sub_id' => $this->session->userdata('subid')));
+        $data = $id_chk->row();
+        $topicid_chk = $this->db->get_where(TOPICS, array('topic_id' => $this->session->userdata('topicid')));
+        $topic_data = $topicid_chk->row();
+        echo"<div class='panel panel-default panel_custom'>
+        <div class='panel-heading'><div class='panel-title'>" . strtoupper($data->sub_name) . " / " . strtoupper($topic_data->topic_name) . " / EXERCISE $ex_type</div></div>";
+
+        $data = array(
+            'subname' => strtoupper($data->sub_name),
+            'topic_name' => strtoupper($topic_data->topic_name),
+            'ex_type' => $this->session->userdata('ex_type'),
+            'qno' => $_POST['qid']
+        );
+        $this->load->view('templates/exam', $data);
+
+
+//        }
+    }
+
+    public function askEndTest() {
+        setShadow();
+        ?>
+        <style>
+            .panel_custom{border-color:#fc6f4b;position:absolute;top:-130;}
+            .panel_custom > .panel-heading {background: #fc6f4b;color:#fff;text-align: center;}
+            @media (max-width: 350px){
+                .panel_custom{position:absolute;top:0;}}
+            @media (max-width: 414px){.panel_custom{position:absolute;top:0;}}
+            @media (max-width: 767px){.panel_custom{position:absolute;top:0;}}
+            @media (max-width: 900px){.panel_custom{position:absolute;top:20;}}
+            @media (max-width: 1200px) {.panel_custom{position:absolute;top:40;}}
+        </style>
+        <?php
+        echo "<div class='panel panel-default panel_custom'><div class='panel-heading'><h3>Quesions Review</h3></div>";
+        $sr = 1;
+        $mark_as_review_arr = $this->session->userdata('markAsReview') ? $this->session->userdata('markAsReview') : array();
+        $mark_as_review_str = "<i>Marked For Review</i>";
+        $ans_arr = $this->session->userdata('ans_arr');
+        $ask_q_count = count($ans_arr) / 2;
+        echo"<table class='table'>";
+        $p = $_POST['qid'];
+        $v = $_POST['val'];
+        $ans_arr[$p] = $v;
+        foreach ($ans_arr as $k => $val) {
+            if ($sr > $ask_q_count)
+                break;
+            $next_col_q = $sr + $ask_q_count;
+            $next_col_ans = $k + $ask_q_count;
+            $next_col_val = $ans_arr[$next_col_ans];
+            $stat = "<font style='color:green;' >ATTEMPTED</font>";
+            $stat_next = $stat;
+            if ($val == 'U' || $val == '' || $val == null) {
+                $stat = "<font style='color:red;' >SKIPPED</font>";
+            }
+            if ($next_col_val == 'U' || $next_col_val == '' || $next_col_val == null) {
+                $stat_next = "<font style='color:red;' >SKIPPED</font>";
+            }
+            echo"<tr><td>Q $sr - $stat ";
+            if (in_array($sr, $mark_as_review_arr)) {
+                echo $mark_as_review_str;
+            }
+            echo"</td><td>Q $next_col_q - $stat_next ";
+            if (in_array($next_col_q, $mark_as_review_arr)) {
+                echo $mark_as_review_str;
+            }
+            echo"</td></tr>";
+            $sr++;
+        }
+        $this->session->set_userdata('ans_arr', $ans_arr);
+        echo"</table>";
+        echo"<hr><center><ul class='list-group'><li class='' style='color:#333;list-style: none;width:100%;height:34px;border-bottom:1px #eee solid;padding-left:10px;padding-top:3px;'>Do you want to submit the answers ?</li>";
+        $val_no = "NO";
+        $val_yes = "YES";
+        echo"<li class='' style='color:#333;list-style: none;width:100%;height:40px;border-bottom:1px #eee solid;padding-left:10px;padding-top:3px;'><input type='button'  class='btn btn-success' name='end' onclick=\"endTest('$val_yes')\" value='YES' /><input type='button' name='cancel' class='btn btn-danger' onclick=\"endTest('$val_no')\" value='NO' /></li></ul></center></div>";
+    }
+
+    public function endTest() {
+        setShadow();
+        if ($_POST['response'] == 'YES') {
+            jump_cause_timer:
+            //CLEAN MARK AS REVIEW
+            $this->session->unset_userdata('markAsReview');
+//            unset($_SESSION['markAsReview']);
+            //END THE TEST
+            $marks = 0;
+            echo "<style type='text/css'>
+    .pad{margin:0px;}
+    .exam{width: 100%;}
+    .panel_custom{border-color:#fc6f4b;position:absolute;top:-130;}
+    .panel_custom > .panel-heading {background: #fc6f4b;color:#fff;text-align: center;}
+    @media (max-width: 350px){
+        .panel_custom{position:absolute;top:0;}}
+    @media (max-width: 414px){.panel_custom{position:absolute;top:0;}}
+    @media (max-width: 767px){.panel_custom{position:absolute;top:0;}}
+    @media (max-width: 900px){.panel_custom{position:absolute;top:20;}}
+    @media (max-width: 1200px) {.panel_custom{position:absolute;top:40;}}
+    input[type='radio']:checked + label {background-color: yellow;}
+    .exam_options{height:200px;width:200px;top:140;padding:8px;background:#fff url(assets/images/tab_icon.png)center center no-repeat;border-radius:100px;right:10;border-bottom:2px solid #eea73c;}
+    .exam_btn{width: 200px;right:10;height:205px;top:205;padding:35px;margin-top:110px;background: #fff;border-bottom:3px solid #333;border-top:10px double #ec8528;}
+    .option_btn{width:90px;height:90px;border-radius:50px;border-top:solid 2px #febf10;border-bottom:2px solid #37a8df;border-left:2px solid #fc6f4b;border-right:2px solid #25af60;}
+    .option_btn:hover{border-radius:50px;border-top:solid 3px #febf10;border-bottom:3px solid #37a8df;border-left:3px solid #fc6f4b;border-right:3px solid #25af60;}
+    .q_btn{font-size:15px;padding:5px;width:25px;border-radius:1px;box-shadow:0px 0px 1px #999;margin:1px;}
+    .sm_color1{background:transparent !important;color:#fc6f4b !important;}
+    .btn-default:hover{border:1px solid #00ae00;}
+    .review_btn{top:180;position: relative;background: #ffffff; color:#fc6f4b;font-size:16px;font:bolder;}
+    .review_btn:hover{background: #ffffff; color:#fc6f4b;font-size:16px;font:bolder;border-top:solid 2px #febf10;border-bottom:2px solid #37a8df;border-left:2px solid #fc6f4b;border-right:2px solid #25af60;}
+</style>";
+            echo "<style>.active-home{background:#fff;border:none;}.active-friends{background:#fff;border:none;}.active-profile{background:#fff;border:none;}</style>";
+            echo "<div class='panel panel-default panel_custom'><div class='panel-heading'><h3 class='mob_h3'>Exam Review</h3>
+        <span style='float:right;width:130px;height:60px;box-shadow:0 0 5px #666;border:1px solid #333;border-radius:5px;padding:10px;margin-top:-60px;background:#fff;color:#333;' id='review'></span></div><ul class='list-group'>";
+            //echo "<li class='list-group-item' > <span id='putMarks'>$marks</span> out of $_SESSION[limit]</li>";
+            //echo "<li style='color:#333;list-style: none;width:100%;border-bottom:1px #eee solid;padding-left:10px;padding-top:3px;'> Graphycal analysis<br>";
+            echo"<div id='graph'></div>";
+            echo"<a href='" . site_url() . "'><i class='fa fa-time'></i></a>";
+            echo"</li></ul>";
+            // echo"<li class='list-group-item'><ul>";
+            //   echo"</ul></li>";
+            $sr = 1;
+            $tot_incorrect = 0;
+            $q_arr = $this->session->userdata('q_arr');
+            $ans_arr = $this->session->userdata('ans_arr');
+            foreach ($q_arr as $key => $val) {
+                $ans_data = (array) $this->db->get_where(QUESTIONS, array('id' => $val))->row();
+//                $ans_q = mysql_query("select * from " . QUESTIONS . " where id='$val'") or die(mysql_error());
+//                $ans_data = mysql_fetch_assoc($ans_q);
+                $q = htmlspecialchars_decode(str_replace("tinymce", "assets/tinymce", $ans_data['Question']));
+                echo"<table class='table table-bordered'><tr><th valign=top >$sr</th><th colspan=3 >$q</th></tr><tr>";
+                $user_ans_op = $ans_arr[$key];
+                $ans_op = $ans_data['Answer'];
+                if ($user_ans_op == $ans_op) {
+                    $marks++;
+                    echo"<td> <font style='color:green;' >Correct</font></td>";
+                } else if ($user_ans_op == "U" || empty($user_ans_op) || $user_ans_op == null || $user_ans_op == "") {
+                    echo"<td> <font style='color:red;' >Skipped</font></td>";
+                } else {
+                    $tot_incorrect++;
+                    echo"<td> <font style='color:red;' >Incorrect</font></td>";
+                }
+                echo"<td>Your Answer : " . htmlspecialchars_decode(str_replace("tinymce", "assets/tinymce", $ans_data["Op$user_ans_op"])) . "</td><td>Actual Answer:<font style='color:green;' >" . htmlspecialchars_decode(str_replace("tinymce", "assets/tinymce", $ans_data["Op$ans_op"])) . "</font></td></tr>";
+                echo"<tr><td colspan=4 ><b>Solution : </b>" . htmlspecialchars_decode(str_replace("tinymce", "assets/tinymce", $ans_data['Solution'])) . "</td></tr></table><hr><hr>";
+                $sr++;
+            }
+            if (isset($_SESSION['test_type'])) {
+                $limit = $this->session->userdata('limit');
+                $t = $tot_incorrect + $marks;
+                $u = $limit - $t;
+                $this->site->updateDppFlag($marks, $tot_incorrect, $u);
+                echo"<script>$('#t_func').html('');</script>";
+            } else {
+                $this->site->updateExFlag();
+            }
+            $c_total = $marks * 3;
+            $review_marks = $c_total - $tot_incorrect;
+            $attempted = $marks + $tot_incorrect;
+            $acc = round($marks * 100 / $attempted, 2);
+            $str = "<b style='font-size:12px;'>Marks:$review_marks</b></br><b style='font-size:12px;'>Accuracy:$acc%</b>";
+            ?>
+            <script>
+                $('#review').html("<?php echo $str; ?>");
+                $('#graph').html("<iframe width='100%' height='400px' style='border:none' src='<?php echo site_url() . "Study_controller/piechart/$marks/$tot_incorrect"; ?>'/>");
+            </script>
+            <?php
+            echo"<br><br>";
+        } else {
+            setShadow();
+            //CONTINUE EXAM
+            $_POST['type'] = 'previous';
+            $_POST['qid'] = 0;
+            $this->getQ();
+        }
+    }
+
+    public function piechart() {
+        $d['cv'] = $this->uri->segment(3);
+        $d['iv'] = $this->uri->segment(4);
+        $this->load->view('templates/piechart', $d);
+    }
+
+    public function markAsReview() {
+        $markAsReview = $this->session->userdata('markAsReview');
+        if (isset($markAsReview)) {
+            $mr_arr = $markAsReview;
+        } else {
+            $mr_arr = array();
+        }
+        $count = count($mr_arr);
+        $mr_arr[$count] = $_REQUEST['srno'];
+//        $_SESSION['markAsReview'] = $mr_arr;
+        $this->session->set_userdata('markAsReview', $mr_arr);
+        print_r($this->session->all_userdata());
+    }
+
+}

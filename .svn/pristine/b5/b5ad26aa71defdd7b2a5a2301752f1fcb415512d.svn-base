@@ -1,0 +1,24 @@
+<div ng-controller="friendcontrol">
+    <style>.active-friends{background:#b9e1f4;border-top:2px solid #37a8df;color:#fff !important;}</style>
+    <style>.f_pic{border-top:solid 2px #febf10;border-bottom:2px solid #37a8df;border-left:2px solid #fc6f4b;border-right:2px solid #25af60;border-radius:50px;background: #eee ;}</style>
+    <div class='panel panel-primary'>
+        <div class='panel-heading'><h3 class='panel-title'>
+                <center>My Friends</center></h3></div>
+        <div class='panel-body'>
+            <div class='media col-md-6' ng-if="friends.s == '2'" style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                {{friends.data}}
+            </div>
+            <div class='media col-md-6' ng-if="friends.s == '1'" ng-repeat="f in friends.data" style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                <div class='media-left'>
+                    <img class='media-object f_pic wow rotateIn' src='{{friends.imgpath + "" + f.UID_Pro_Pic}}' width='84' height='84'>
+                </div>
+                <div class='media-body wow rollIn' style='padding:3px;'>
+                    <a href='#/profile/{{f.val}}'><h4 class='media-heading'>{{f.UID_FirstName + " " + f.UID_MiddleName + " " + f.UID_LastName}}</h4></a>
+                    <div id='button_{{f.UID}}'>
+                    </div>
+                    <a href='#/profile/{{f.val}}'><button class='btn btn-default'>View Profile</button></a><a href='' ng-click='unfriend(f.val)'><button class='btn btn-default'>Unfriend</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

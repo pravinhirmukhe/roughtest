@@ -1,0 +1,21 @@
+<div ng-controller="keyconcepts">
+    <style type='text/css'>
+        .sm_color1{background:transparent !important;color:#fc6f4b !important;}
+    </style>
+    <div class='panel panel-default panel_custom'>
+        <div class='panel-heading'>
+            <div class='panel-title' style='font-size:15px'>
+                {{kc.sub_name}}
+                <span style=''> / </span>{{kc.topic_name}} / KEY CONCEPTS
+            </div>
+        </div>
+    </div>
+
+    <div style='float:right;margin-right:1%;'>
+        <p>Done with the key-concepts ? <a href='#' class='btn btn-default' ng-click='completeKc(kc.subid, kc.tid, 1)'>PROCEED</a>
+        </p>
+    </div>
+    <span class='panel panel-warning' width='100%' height='500' ng-bind-html="kc.content"></span>
+
+    <!--<span class='panel panel-warning' width='100%' height='500'>{{msg}}</span>-->
+</div>

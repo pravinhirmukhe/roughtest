@@ -1,0 +1,482 @@
+<style type="text/css">
+    .navbar-default{border-bottom:2px solid #37a8df;}
+    html>body .navbar { height: auto;}
+</style>
+<nav class="navbar navbar-default navbar-fixed-top" style="background: #fff;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="border-top:solid 1px #febf10;
+                    border-bottom:2px solid #37a8df;border-left:1px solid #fc6f4b;border-right:1px solid #25af60;">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a data-intro="Welcome to Roughsheet!!" class="navbar-brand intro-lead-in" href="index.php" style="color:#dfe3ee;"><img class='logo_r' src="assets/images/logo_beta.png" style="margin-left:10px;margin-top:-7px;background: #fff;" alt="roughsheet" /></a>
+            <!--hidden nav-->
+            <div class="visible-xs" style="float:right">
+                <a class="btn btn-warning" data-toggle="false" role="button" aria-expanded="false"  href='<?= site_url("Logout") ?>'>Logout</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle hidden_side_menu_p" style="padding:1px;height:34px;margin-top:8px;border-bottom:2px solid #37a8df;" data-toggle="dropdown" aria-expanded="false">
+                        Side Menu<span> </span>
+                        <!--<span class="caret"></span>-->
+                    </button>
+                    <ul class="dropdown-menu" role="menu" style="z-index:1032;width:230px;margin-left:-40px;">
+                        <li>
+                            <div class="list-group" style="z-index:1032;">
+                                <a href="#/planner" class="list-group-item"><img class='small_icon' src="assets/images/p2.png"  class='glass'>Planner</a>
+                                <a href="#/studymaterial" class="list-group-item"><img  class='small_icon' src="assets/images/s2.png">Study Material</a>
+                                <a href="#/dpp" class="list-group-item"><img  class='small_icon' src="assets/images/pp2.png">Practice Problem Sheets</a>
+                                <a href="#/focusarea" class="list-group-item"> <img  class='small_icon' src="assets/images/f2.png">Focus Areas</a>
+                                <!--<a href="#" onclick="getPage('GALACTICOS')" class="list-group-item">Galactitos</a>-->
+                                <a href="#/performance" class="list-group-item"> <img  class='small_icon' src="assets/images/m2.png">My Performance</a>
+                                <a href="#/galacticos" class="list-group-item"> <img  class='small_icon' src="assets/images/rank_4.png">Ranking</a>
+                            </div></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- ends   -->      
+        </div>
+        <!--   collapse code     -->
+        <div id="navbar" class="navbar-collapse collapse">
+            <div  class="dropdown navbar-right hidden-xs" style="background:#fff;margin-left:10px;margin-right:-30px;width:50px;height:48px;">
+                <button  id="dLabel" type="button" class="btn"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  style="background: transparent;padding: 0px;">
+                  <!--<span class="glyphicon glyphicon-cog" aria-hidden="true">-->
+                    <img class="media-object" src="<?= IMGURL . $this->session->userdata('UID_Pro_Pic') ?>" style="width: 60px;height: 50px;z-index:2;border-right:2px solid #c9c9c9;" alt="user"/>
+
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dLabel" style="width:200px;z-index:1030;border-bottom:solid 2px #fc6f4b;">
+                    <li><a href="" data-toggle="modal" data-target=".change_pass" >Change Password</a></li>
+                    <li><a href='<?= site_url('Logout') ?>'>Logout</a></li>
+                    <!--<li><a href='#' id='take_tour' >Take A Tour</a></li>-->
+                    <li><a data-toggle="modal" data-target=".invite" style="cursor: pointer;" >Invite</a></li>
+                    <li><a data-toggle="modal" data-target=".contact_form" style="cursor: pointer;" >Contact Us</a></li>
+                    <li><img class="media-object" src="<?= IMGURL . $this->session->userdata('UID_Pro_Pic') ?>" style="width:198px;border-top:solid 2px #fc6f4b;border-bottom:solid 3px #37a8df;margin-bottom:1px;" alt="user">
+                        <a data-toggle="modal" data-target=".changeprofpic" style="color:#fff;background:#fc6f4b;border-top:3px solid #fff;z-index:1000;cursor: pointer;position: absolute;bottom:0;border-right:solid 2px #37a8df;border-radius: 0 20px 0px 0;">Change Picture</a></li>
+                </ul>
+            </div>
+            <!--notification drop down-->
+            <?php
+            $uid = $this->session->userdata('UID');
+            $menu_fr_arr = (array) $this->db->select('FR_UID')->get_where(FRIENDS_TABLE, array('UID' => $uid))->row();
+            $menu_fr_arr = json_decode($menu_fr_arr['FR_UID'], true);
+            ?>
+            <div  data-intro="This is the Notification for Friendlist" class="dropdown navbar-right notify_sm intro-lead-in" style="background:#b9e1f4;border-top:2px solid #37a8df;margin-right:-10px;">
+                <button  id="dLabel" type="button" class="btn"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background: transparent;height: 50px;">
+                    <span class="glyphicon glyphicon-bell" aria-hidden="true" style="z-index:1032;"></span> 
+                    <span  id='print_badge' class='badge' style='position:absolute;background: #fd7d5e;font-size:12px;margin-left:0px;margin-top:8px;color:#fff'><?= count($menu_fr_arr) ?></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dLabel" style="width:250px;overflow:auto;max-height:500px;z-index:1030;">
+                    <?php
+                    if (count($menu_fr_arr) == 0) {
+                        echo"<center>No notifications for now.</center>";
+                    } else {
+                        foreach ($menu_fr_arr as $k => $v) {
+                            $c_d = (array) $this->db->get_where(USER_INFO, array('UID' => $v))->row();
+                            echo"<li class='request'><div id='request_$v'>
+<img class='img-thumbnail' style='width:40px;height:40px;' src='" . IMGURL . "" . $c_d['UID_Pro_Pic'] . "'>&nbsp;&nbsp;
+<a href='#/profile/$v'>" . $c_d['UID_FirstName'] . " " . $c_d['UID_LastName'] . " </a>&nbsp;
+<span id='fr_data_$v' style='float:right;'>
+<a ng-click='mconfirmed($v)'><span class='glyphicon glyphicon-ok btn-success r_option' style='cursor:pointer;margin:-1px;'></span></a>
+<a ng-click='mreject($v)'><span class='glyphicon glyphicon-remove btn-danger r_option' style='cursor:pointer;margin:-1px;'></span></a>
+</span></div></li>";
+                        }
+                    }
+                    ?> </ul>
+            </div>
+            <!--     notification ends     -->
+            <span class="navbar-form navbar-right" role="search">
+                <div class="hidden-xs">
+                    <div data-intro="Search for friends!" class="input-group intro-lead-in">
+                        <input type="text" id="search_q" class="form-control" style="min-width:200px;max-width:200px;
+                               border-bottom:2px solid #37a8df;color:#37a8df;" placeholder="Search friend" ng-model="searchf">
+                        <span class="input-group-btn">
+                            <a href="#/search/{{searchf}}"><button class="btn btn-default" style="border-top:solid 1px #febf10;
+                                                                   border-bottom:1px solid #37a8df;
+                                                                   border-left:1px solid #fc6f4b;
+                                                                   border-right:1px solid #25af60;color:#37a8df;" type="button">Go!</button></a>
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </span>
+            <ul class="nav navbar-nav navbar-right">
+                <li  class="active-home" ><a href="index.php">Home<span class="sr-only">(current)</span></a></li>
+                <li data-intro="This is the Roughsheet Friend list!" class="active-friends intro-lead-in"><a href="#/friends">Friends</a></li>
+                <li data-intro="This is the Roughsheet Facebook Friend list!" class="active-fbfriends intro-lead-in"><a href="#/fbfriends">FB Friends</a></li>
+                <!--<li><a href="#" onclick="getPage('PROFILE')"> -->
+                <li data-intro="This is the Your Profile!" class="active-profile intro-lead-in"><a href="#/profile/<?= $this->session->userdata('UID') ?>">Profile </a></li>
+                <li class="visible-xs" ><a href='<?= site_url('Logout') ?>'>Logout</a></li>
+            </ul>
+        </div>
+        <!--ends-->
+  <!--      <a class='search_toggle'><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>-->
+  <!--     <span class="navbar-form navbar-right" role="search">-->
+        <!--      <div class="hidden-lg" style="max-width:99%;margin-left: 10px;display: none;">-->
+        <!--  <div class="input-group">-->
+        <!--    <input type="text" id="search_q" class="form-control" style="" placeholder="Search friend">-->
+        <!--    <span class="input-group-btn">-->
+        <!--      <button class="btn btn-default" style="" type="button" onclick="search()">Go!</button>-->
+        <!--    </span>-->
+        <!--  </div>/input-group -->
+        <!--</div> /.col-lg-6 -->
+        <!-- </span>-->
+    </div>
+</nav>
+<!--model code-->
+<div class="modal fade exam_inst" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  glass">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Exam Instructions</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    <div class="col-md-7">
+                        <span id="exam_inst"></span>
+                        <span id="start_exam_btn"></span>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade examwizard" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content" id="exambody">
+
+        </div>
+    </div>
+</div>
+
+<!-- ends-->
+<!--model code-->
+<div class="modal fade change_pass" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Change Password</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    <div class="col-sm-8 col-sm-offset-2" ng-if="!chpuser.flag">
+                        <form class="form-horizontal" ng-submit="checkpass()">
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-xs-4">Password</label>
+                                <div class="col-xs-8">
+                                    <input type="password" class="form-control " name="password" ng-model="chpuser.cpass" id="inputPassword3" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div >
+                                    <button type="submit" name=submit class="btn btn-block btn-default">Check Password</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-8 col-sm-offset-2" ng-if="chpuser.flag">
+                        <form class="form-horizontal" ng-submit="changepass()">
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-xs-4">Password</label>
+                                <div class="col-xs-8">
+                                    <input type="password" class="form-control " name="password" ng-model="chpuser.pass" id="inputPassword3" placeholder="Password">
+                                </div>
+                            </div>   
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-xs-4">Re-Password</label>
+                                <div class="col-xs-8">
+                                    <input type="password" class="form-control " name="password" ng-model="chpuser.repass" id="inputPassword3" placeholder="Password">
+                                </div>
+                            </div> 
+                            <div class="form-group">
+                                <div >
+                                    <button type="submit" name=submit class="btn btn-block btn-default">Change Password</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ends-->
+<!--model code-->
+<div class="modal fade invite" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  glass">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Invitation Code</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    <div class="col-md-12" id="invite">
+                        <center><h3>Use this code to invite friends
+                            </h3>
+                            <div class='alert alert-success'>
+                                <h4><?php
+                                    echo $this->site->getInviteCode();
+                                    ?></h4>
+                            </div>
+                            <hr>
+                            <h4 style="color:green">List of people who joined RoughSheet using your code</h4>
+                            <table class="table table-bordered text-centered">
+                                <tr><th>Name</th><th>Email</th></tr>
+                                <?php foreach ($this->site->getInviteCodeUsed() as $u_d) { ?>
+                                    <tr><td><?php echo $u_d['UID_FirstName'] . ' ' . $u_d['UID_LastName'] . '  </td><td>  ' . $u_d['UID_Email']; ?></td></tr>
+                                <?php } ?>
+                            </table>
+                        </center>
+                    </div>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ends-->
+<!--model code-->
+<div class="modal fade contact_form" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header  glass">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Contact Us</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    <form ng-submit="contact_us()">
+                        <div class="col-md-12" id="contact" style="max-height:350px;">
+                            <div class="form-group">
+                                <span class="col-md-2"><b>Subject</b></span>
+                                <div class="col-md-10">
+                                    <input id="sub" name="subject" type="text" placeholder="Subject" class="form-control" ng-model="contact.sub">
+                                    <span class='error' id="print_error_subject"></span>
+                                </div>
+                            </div>
+                            <br/><br/>
+                            <div class="form-group" >
+                                <span class="col-md-2"><b>Message</b></span>
+                                <div class="col-md-10">
+                                    <textarea class="form-control"  ng-model="contact.msg" id="message" name="message" placeholder="What's on your mind?" rows="7"></textarea>
+                                    <span class='error' id="print_error_msg"></span>
+                                </div>
+                                <div class="col-md-10 text-center col-md-offset-2"  style="margin-top:30px;">
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        <span class="glyphicon glyphicon-send" aria-hidden="true"></span></button>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                    <br/>
+                                    <span style='color:green' id="print_message"></span>
+                                </div>
+                            </div>
+                        </div>   
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ends-->
+<script>
+    function chkPassForm() {
+        document.getElementById('form_pass').innerHTML = "<span id='passMsg'></span> <br>Password: <input type='password' id='chkPass' class='form-control' ><input type='button' value='Submit' onclick='passCheck()' class='btn btn-primary'>";
+    }
+    function passCheck() {
+        pass = document.getElementById('chkPass').value;
+        $.ajax({
+            type: "POST",
+            url: "app/includes/set.php?checkPass",
+            data: "mypass=" + pass,
+            success: function (result)
+            {
+                //0-> empty, 1-> incorrect, 2->correct
+                if (result == 0) {
+                    document.getElementById('passMsg').innerHTML = "Password is required";
+                }
+                else if (result == 1) {
+                    document.getElementById('passMsg').innerHTML = "Incorrect Password";
+                }
+                else if (result == 2) {
+                    document.getElementById('form_pass').innerHTML = "<span id='cpMsg'></span><div class='form-group'><label>New Password:</label><input class='form-control'  type='password' class='form-control' id='CH_pass'></div><div class='form-group'><label>Re-Type Password: </label><input type='password' class='form-control' id='CH_cpass'><br><input onclick='changePass()' type='button' class='btn btn-block btn-info' value='Change Password'>";
+                }
+            }
+        });
+    }
+    function changePass() {
+        flag = 0;
+        pass = document.getElementById('CH_pass').value;
+        re_pass = document.getElementById('CH_cpass').value;
+        pass_err = "";
+        re_pass_err = "";
+        if (pass == "") {
+            pass_err = "Password Cannot Be Left Empty";
+            flag++;
+        }
+        if (re_pass == "") {
+            re_pass_err = "<br>Confirm Password Cannot Be Left Empty";
+            flag++;
+        }
+        if (pass == re_pass && flag == 0) {
+            $.ajax
+                    ({
+                        type: "POST",
+                        url: "app/includes/set.php?changePass",
+                        data: "newpass=" + pass,
+                        success: function (result)
+                        {
+                            if (result) {
+                                document.getElementById('cpMsg').innerHTML = 'Password updated';
+                            }
+                            else {
+                                document.getElementById('cpMsg').innerHTML = 'Error while updating password';
+                            }
+                        }
+                    });
+        }
+        else {
+            not_equal = "<br>Password Do Not Match";
+            document.getElementById('cpMsg').innerHTML = "<i>" + pass_err + re_pass_err + not_equal + "</i>";
+        }
+    }
+</script>
+<div class="modal fade bs-example-modal-lg changeprofpic" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style='background: #f8f8f8;'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Update Profile picture</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row' id="cando">
+                    <form method="POST" enctype="multipart/form-data" name="myForm" id="propicform" onsubmit="return validateForm()">
+                        <div class="col-md-12" id="imgdiv">
+                            <div class="col-sm-6 col-md-6">
+                                <div class="form-group">
+                                    <center>
+                                        <img src="<?= IMGURL . $this->session->userdata('UID_Pro_Pic') ?>" class="img-circle img-responsive"/>
+
+                                    </center>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 ">
+                                <div class="form-group">
+                                    <input type='file' id="imgInp" name="pro_pic_file" />
+
+<!--<input type="hidden" name="pro_pic" value="pro_pic">-->
+<!--<input type="file" id='pro_pic_path' name="pro_pic_file" class="btn btn-info btn-sm">-->
+                                    </br>
+                                    </br>
+                                </div>
+                                <center><div class="form-group">
+                                        <input type="submit" class="col-md-5 btn btn-info" value="Submit">
+                                    </div><div id='no_pic'></div>
+                                </center>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 hide" id="cropperdiv">
+                            <img id="blah" src="#" class="img-responsive"/>
+                            <input type="button" class="col-md-5 btn btn-info" onclick="cropandsave()" value="Save">
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function contact_us() {
+        var msg = document.getElementById('message').value;
+        var subject = document.getElementById('sub').value;
+        $.ajax({
+            type: "POST",
+            url: "app/includes/set.php?contact_us",
+            data: {
+                "sub": subject,
+                "msg": msg
+            },
+            success: function (result)
+            {
+                document.getElementById('sub').value = "";
+                document.getElementById('message').value = "";
+                $("#print_message").html(result);
+            }
+        });
+    }
+    function validateForm() {
+        var x = document.forms["myForm"]["pro_pic_file"].value;
+        if (x == null || x == "") {
+            document.getElementById('no_pic').innerHTML = "<b style='color:red;'>Please select image..<b>";
+            return false;
+        } else {
+            document.getElementById('no_pic').innerHTML = "<b style='color:red;'>Uploading Please wait...<b>";
+            var formData = new FormData($('#propicform')[0]);
+            $.ajax("<?= SITEURL ?>User_controller/propictempup", {
+                method: "POST",
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (d) {
+                    if (d.s == "1") {
+//                        alert(d.imgurl);
+                        $('#blah').attr('src', d.imgurl);
+                        document.getElementById('no_pic').innerHTML = "<b style='color:Green;'>Upload Success. plz crop the image and save it!<b>";
+                        $('#blah').cropper({
+                            aspectRatio: 1 / 1,
+                            crop: function (e) {
+                            }
+                        });
+                        $('#imgdiv').slideUp('slow');
+                        $('#cropperdiv').removeClass('hide').slideDown('slow');
+                    } else {
+                        document.getElementById('no_pic').innerHTML = "";
+                        alertify.errorAlert(d.msg);
+                    }
+
+                },
+                error: function () {
+
+                }
+            });
+        }
+    }
+    /**
+     * Comment
+     */
+    function cropandsave() {
+        $('#blah').cropper('getCroppedCanvas').toBlob(function (blob) {
+            var formData = new FormData($('#propicform')[0]);
+            formData.append('cropimg', blob);
+            $.ajax("<?= SITEURL ?>User_controller/propictempup/c", {
+                method: "POST",
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                type: "post",
+                success: function (d) {
+                    if (d.s == "1") {
+                        alertify.alert("Success", d.msg);
+                        window.location = "<?= current_url() ?>";
+                    } else {
+                        alertify.errorAlert(d.msg);
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        });
+    }
+</script>

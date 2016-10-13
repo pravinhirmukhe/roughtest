@@ -1,0 +1,22 @@
+
+app.service('Data', function ($http) {
+    this.GetTerminal = function ($id) {
+        return $http.get(site_url + "User_controller/getTerminal/" + $id);
+    };
+    this.Get_Terminal = function ($id) {
+        return $http.get(site_url + "admin/Admin_controller/getTerminal/" + $id);
+    };
+    this.ChangeStat = function ($tab) {
+        return $http.post(site_url + "admin/Admin_controller/setStatus", $tab);
+    };
+    this.Get_State = function ($id) {
+        return $http.post(site_url + "admin/Setting_controller/getStateBy_Country/" + $id);
+    };
+    this.Get_City = function ($id) {
+        return $http.post(site_url + "User_controller/get_City/" + $id);
+    };
+    this.set_Default = function ($id) {
+        return $http.post(site_url + "User_controller/Set_Default/" + $id);
+    };
+});
+

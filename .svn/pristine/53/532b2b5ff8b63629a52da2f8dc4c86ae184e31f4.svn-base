@@ -1,0 +1,37 @@
+<div ng-controller="friendcontrol">
+    <style>.active-friends{background:#b9e1f4;border-top:2px solid #37a8df;color:#fff !important;}</style>
+    <style>.f_pic{border-top:solid 2px #febf10;border-bottom:2px solid #37a8df;border-left:2px solid #fc6f4b;border-right:2px solid #25af60;border-radius:50px;background: #eee ;}</style>
+    <div class='panel panel-primary'>
+        <div class='panel-heading'>
+            <h3 class='panel-title '>
+                <span class="col-md-11"><center>My Friends</center></span>
+                <a href="" ng-click="getFBFriends()" class="btn btn-danger pull-right col-md-1">Friends</a></h3>
+            <div class="clearfix"></div>
+        </div>
+        <div class='panel-body'>
+
+            <!--{{fb_friends|json}}-->
+            <!--ng-if="fb_friends.length == 0 && !FBID"-->
+            <div class='media col-md-6'  style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                <!--ng-if="!FBID"-->
+                Your account not connected to Facebook. <button  ng-click="getFBConnect()">FB Connect</button>
+            </div>
+            <div class='media col-md-6' ng-if="fb_friends.length > 0 && FBID" ng-repeat="f in fb_friends" style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                <div class='media-left'>
+                    <img class='media-object f_pic wow rotateIn' src='{{f.img}}' width='84' height='84'>
+                </div>
+                <div class='media-body wow rollIn' style='padding:3px;'>
+                    <a href=''><h4 class='media-heading'>{{f.name}}</h4></a>
+                    <!--                    <div id='button_{{f.UID}}'>
+                                        </div>-->
+                    <!--<a href='#/profile/{{f.val}}'><button class='btn btn-default'>View Profile</button></a><a href='' ng-click='unfriend(f.val)'><button class='btn btn-default'>Unfriend</button></a>-->
+                </div>
+            </div>
+        </div>
+        <!--        <div class='panel-body'>
+                    <button ng-click="getFBFriends()">FB Friends</button>
+                    <button ng-if="!FBID" ng-click="getFBConnect()">FB Connect</button>
+                    <div id="result_friends"></div>
+                </div>-->
+    </div>
+</div>
