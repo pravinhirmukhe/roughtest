@@ -1,0 +1,74 @@
+
+<div id="page-wrapper" class="gray-bg dashbard-1" ng-controller="subject">
+    <div class="content-main">
+        <!--banner-->	
+        <?php $this->load->view('admin/layout/breadcrumb') ?>
+        <!--//banner-->
+        <!--content-->
+        <div class="content-top">
+            <div class="col-md-12">
+                <div class="content-top-1 ">
+                    <div class="table-responsive">
+                        <form action="<?= site_url() ?>admin/KC-save" method="POST">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <div class="form-group">
+                                            <label>Subject Name</label>
+                                                <select name='sub_id' ng-model="user.sub_id" data-placeholder='Subject Name'class="form-control" ng-change="getTopic(user.sub_id)">
+                                                    <option value="">Select Subject</option>
+                                                    <?php
+                                                    foreach ($subject as $r) {
+                                                        echo "<option value='" . $r->sub_id . "'>" . $r->sub_name . "</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                            <span class="help-block"><?php echo form_error('sub_id'); ?></span>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <div class="form-group">
+                                            <label>Topic Name</label>
+                                                 <select name="topic_id" class="form-control">
+                                                    <option value="">Select Topic</option>
+                                                    <option value="{{t.topic_id}}" selected ng-repeat="t in topic">{{t.topic_name}}</option>
+                                                </select>
+                                            <span class="help-block"><?php echo form_error('topic_id'); ?></span>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea id="kc_text" name="kc_text" class="mceEditor" cols="85" rows="10"></textarea>
+                                        
+                                            <span class="help-block"><?php echo form_error('kc_text'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-default">Submit</button>
+                                <a href="<?php print base_url(); ?>admin/KeyConcepts"><button type="button" class="btn default">Cancel</button></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+</div>
+<script>
+   
+    function validateAlpha() {
+        var textInput = document.getElementById("cname").value;
+        textInput = textInput.replace(/[^A-Za-z ]/g, "");
+        document.getElementById("cname").value = textInput;
+    }
+</script>

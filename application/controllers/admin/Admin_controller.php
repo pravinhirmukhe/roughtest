@@ -152,7 +152,8 @@ class Admin_controller extends MY_Controller {
     }
 
     public function save_key_concepts() {
-        $this->form_validation->set_rules('topic_id', 'Topic Id', 'required');
+        $this->form_validation->set_rules('sub_id', 'Subject Name', 'required');
+        $this->form_validation->set_rules('topic_id', 'Topic Name', 'required|is_unique[rs_key_concepts_27062015.topic_id]');
         $this->form_validation->set_rules('kc_text', 'Key Concepts Description', 'required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -170,6 +171,7 @@ class Admin_controller extends MY_Controller {
     }
 
     public function key_concepts() {
+        $this->data['subject'] = $this->Admin_model->getSubject();
         $this->data['topics'] = $this->Admin_model->getTopics();
         $this->data['template'] = "KeyConcepts/key_concepts";
         $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "KeyConcepts"));
@@ -208,9 +210,12 @@ class Admin_controller extends MY_Controller {
     }
 
     public function key_concept_edit($id) {
-
+        $this->data['subject'] = $this->Admin_model->getSubject();
         $this->data['topics'] = $this->Admin_model->getTopics();
         $this->data['kc'] = $this->Admin_model->getKeyConceptsById($id);
+        $topicId = $this->data['kc'][0]->topic_id;
+        $this->data['sub'] = $this->Admin_model->getSubByTopicId($topicId);
+
         $this->data['id'] = $id;
         $this->data['template'] = "KeyConcepts/key_concepts_edit";
         $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "KeyConcept Edit"));
@@ -227,6 +232,7 @@ class Admin_controller extends MY_Controller {
         } else {
 
             unset($_POST['id']);
+            unset($_POST['sub_id']);
             $result = $this->Admin_model->updateKeyConcept($_POST, $id);
             if ($result == true) {
                 $this->session->set_flashdata('message', array('title' => 'Success.', 'content' => 'Key Concept Updated Successfully.', 'type' => 's'));
@@ -382,4 +388,28 @@ class Admin_controller extends MY_Controller {
         echo $this->datatables->generate();
     }
 
+    public function getTopic($id) {
+        echo json_encode($this->Admin_model->getTopicBySubId($id));
+    }
+
+//mine
+    public function getPrevGraph() {
+        $sel_yr = $_POST['sel_yr'];
+        $MonthWiseUser = $this->Admin_model->getMonthDataPrev($sel_yr);
+
+        $res1 = array();
+        $monthData = array();
+        $countData = array();
+        if (isset($MonthWiseUser)) {
+            for ($i = 0; $i < count($MonthWiseUser); $i++) {
+                $monthData[$i] = $MonthWiseUser[$i]['month'];
+                $countData[$i] = $MonthWiseUser[$i]['total_users'];
+            }
+        }
+        $monthGraphArr = array("res_monthData" => $monthData, "res_countData" => $countData);
+
+        echo json_encode($monthGraphArr);
+    }
+
+//by rajkumar sir
 }

@@ -248,9 +248,6 @@
             </div>
         </section>
         <!-- ends -->
-        <?php
-        echo $this->site->encryptPass("pravin");
-        ?>
         <section id="features">
             <div class="container-fluid">
                 <div class="row pad-top  min-height-cls" >

@@ -1,10 +1,12 @@
 <?php
 $date = date("Y-m-d");
+$group_id = $this->session->userdata('group_id');
 ?>
 
 <div id="page-wrapper" class="gray-bg dashbard-1">
     <div class="content-main">
         <?php $this->load->view('admin/layout/breadcrumb') ?>
+        <?php if($group_id == 1){?>
         <div class="content-top clearfix">
             <div class="banner">
                 <?php if (isset($subjects)) { ?>
@@ -119,12 +121,13 @@ $date = date("Y-m-d");
         
         <!--graph-->
     <div class="content-top clearfix">
-        <input type ="hidden" id="prev_date" value="<?php echo $date; ?>">
+        <input type ="hidden" id="prev_date" value="">
         <div class="graph">
             <div class="graph-grid">
                 <div class="col-md-6 graph-1">
                     <div class="grid-1">
                         <h5>User SignUp(Week)</h5>
+                        <span id="show_week"><?php echo $date; ?></span>
                         <canvas id="bar1" height="300" width="500" style="width: 500px; height: 300px;"></canvas>
                         <script>
                                 var barChartData = {
@@ -144,8 +147,11 @@ $date = date("Y-m-d");
                 </div>
                 <div class="col-md-6 graph-2">
                     <div class="grid-1">
-                        <h5>User SignUp(Year)</h5>
-                        <span class="padding-left: 70%;"><a href="javascript:prev_year();">Prev</a></span>
+                        <h5>User SignUp(Year) <span ><a href="javascript:prev_year();">Prev</a></span><span id="nxt_link"><a href="javascript:next_year();">Next</a></span>
+                            
+                        </h5>
+                        <span id="show_year"></span>
+                      
                         <canvas id="line1" height="300" width="500" style="width: 500px; height: 300px;"></canvas>
                         <script>
                             var lineChartData = {
@@ -196,16 +202,102 @@ $date = date("Y-m-d");
             </div>
         </div>
     </div>
+        <?php } ?>
         <?php $this->load->view('admin/layout/footer'); ?>
     </div>
    
     <div class="clearfix"></div>
 </div>
 <script>
-    function prev_year(data){
+    $("document").ready(function(){
+        $("#nxt_link").css("display","none");
+        var date = new Date();
+        var yr = date.getFullYear();
+        $("#prev_date").val(yr);
+        $("#show_year").html(yr);
+    });
+    function prev_year(){
        
         //prev.setDate(current_date.getDate() - 1);
+        $("#nxt_link").css("display","block");
+        var c_yr =$("#prev_date").val();
+        var prev = c_yr - 1;
+        $("#prev_date").val(prev);
+        $("#show_year").html(prev);
+        $.ajax({
+            url: "<?php $siteurl?>Admin_controller/getPrevGraph",
+            type: 'POST',
+            dataType: "json",
+            data: {
+              sel_yr:prev
+            },
+            success: function(data) {
+                if(data.res_monthData != 'null' && data.res_countData !='null'){
+                    var lineChartData = {
+                              labels : data.res_monthData,
+                              datasets : [
+                                      {
+                                              fillColor : "#fff",
+                                              strokeColor : "#1ABC9C",
+                                              pointColor : "#1ABC9C",
+                                              pointStrokeColor : "#1ABC9C",
+                                              data :data.res_countData
+                                      }
+                              ]
+
+                      };
+                      new Chart(document.getElementById("line1").getContext("2d")).Line(lineChartData);
+                }else{
+
+                }
+            },
+            error: function(data) {
+               alert("Error");
+            }
+            
+         });
+    }
+    
+    
+     function next_year(){
        
+        //prev.setDate(current_date.getDate() - 1);
+        var c_yr =$("#prev_date").val();
+        var prev = parseInt(c_yr) + 1;
+        $("#prev_date").val(prev);
+        $("#show_year").html(prev);
+        $.ajax({
+            url: "<?php $siteurl?>Admin_controller/getPrevGraph",
+            type: 'POST',
+            dataType: "json",
+            data: {
+              sel_yr:prev
+            },
+            success: function(data) {
+                if(data.res_monthData != 'null' && data.res_countData !='null'){
+                  var lineChartData = {
+                            labels : data.res_monthData,
+                            datasets : [
+                                    {
+                                            fillColor : "#fff",
+                                            strokeColor : "#1ABC9C",
+                                            pointColor : "#1ABC9C",
+                                            pointStrokeColor : "#1ABC9C",
+                                            data :data.res_countData
+                                    }
+                            ]
+
+                    };
+                    new Chart(document.getElementById("line1").getContext("2d")).Line(lineChartData);
+                }else{
+
+                }
+            },
+            error: function(data) {
+               alert("Error");
+            }
+            
+         });
     }
     
 </script>

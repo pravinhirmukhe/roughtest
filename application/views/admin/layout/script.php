@@ -17,6 +17,7 @@
 
 <script src="<?= ADMINASSETS ?>ckeditor/ckeditor.js"></script>
 <script src="<?= ADMINASSETS ?>ckeditor/samples/js/sample.js"></script>
+
 <script type="text/javascript">
     $(function () {
         $('#supported').text('Supported/allowed: ' + !!screenfull.enabled);
@@ -98,3 +99,5 @@
 
 <script src="<?= ADMINASSETS ?>js/moment.min.js"></script>
 <script src="<?= ADMINASSETS ?>js/bootstrap-datetimepicker.min.js"></script>
+
+

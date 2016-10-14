@@ -27,6 +27,14 @@ class User_controller extends MY_Controller {
         $this->user_layout($this->data);
     }
 
+//    public function rdaate() {
+//        $r = $this->db->select('UID')->get(USER_INFO);
+//        foreach ($r->result() as $x) {
+//    $this->db->update(USER_INFO, array('create_date' => date("Y-m-d h:i:s", mt_rand(strtotime(date("Y-m-d h:i:s") . "-50 days"), strtotime(date("Y-m-d h:i:s"))))), array('UID' => $x->UID));
+//        }
+//        echo 'done';
+//    }
+
     public function getCities() {
         echo json_encode($this->site->getCities());
     }
@@ -272,6 +280,8 @@ class User_controller extends MY_Controller {
                             window.location.assign('" . site_url() . "/index.php')
                         }
                         setTimeout(gotol, 2000);</script>";
+        } else {
+            echo "Database error transaction rollback";
         }
     }
 

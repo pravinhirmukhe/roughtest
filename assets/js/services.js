@@ -18,5 +18,8 @@ app.service('Data', function ($http) {
     this.set_Default = function ($id) {
         return $http.post(site_url + "User_controller/Set_Default/" + $id);
     };
+    this.GetTopic = function ($id) {
+        return $http.get(site_url + "admin/Admin_controller/getTopic/" + $id);
+    };
 });
 

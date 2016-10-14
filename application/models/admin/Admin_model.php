@@ -34,6 +34,9 @@ class Admin_model extends MY_Model {
     public function getTopicBySubId($id){
         return $this->getResult($this->db->get_where('rs_sub_topics_23052015', array('sub_id' => $id)));
     }
+    public function getSubByTopicId($topicId){
+        return $this->getResult($this->db->get_where('rs_sub_topics_23052015', array('topic_id' => $topicId)));
+    }
     public function getSubjects(){
          return $this->getResult($this->db->select('sub_id,sub_name')->get('rs_subjects_1423552512'));
     }
@@ -94,6 +97,19 @@ class Admin_model extends MY_Model {
     }
     public function getdayWiseUserData(){
         $query = $this->db->query("SELECT count(UID) as total_users,create_date,DAYNAME(create_date) as day FROM rs_user_info_1423552512 WHERE  DATE(create_date) = CURDATE() group by DAYNAME(create_date)");
+        return $query->result_array();
+    }
+    /**
+     * Auther:Rajkumar
+     * @return type
+     */
+    public function getSubject(){
+         return $this->getResult($this->db->select('sub_id,sub_name')->get('rs_subjects_1423552512'));
+    }
+    
+    public function getMonthDataPrev($data){
+        //echo "SELECT count(UID) as total_users,MONTHNAME(create_date) as month FROM rs_user_info_1423552512 WHERE YEAR(create_date) = '".$data."' group by  MONTH(create_date)";
+        $query = $this->db->query("SELECT count(UID) as total_users,MONTHNAME(create_date) as month FROM rs_user_info_1423552512 WHERE YEAR(create_date) = '".$data."' group by  MONTH(create_date)");
         return $query->result_array();
     }
     

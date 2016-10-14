@@ -104,7 +104,8 @@ class User_model extends CI_Model {
             "ic_used_UID" => $ic_uid,
             "fb_link" => $data['fb_link'],
             "fb_id" => $data['fb_id'],
-            "payment_id" => $data['payment_id']
+            "payment_id" => $data['payment_id'],
+            "create_date" => date('Y-m-d h:i:s')
         ));
         $uid_data = (array) $this->db->get_where(USER_INFO, array('UID_Email' => $data['email']))->row();
 //        mysql_query("insert into " . USER_INFO . " (`UID_FirstName`, `UID_MiddleName`, `UID_LastName`, `UID_Gender`, `UID_CurrentCity`, `UID_Hometown`, `UID_DOB`, `UID_Contact`, `UID_Email`, `UID_CurrentLevel`, `UID_CurrentRoleOrFuncArea`, `UID_CurrentInstitutionOrCompany`, `invitation_code`,`ic_used_UID`,`fb_link`,`fb_id`)
@@ -167,15 +168,26 @@ class User_model extends CI_Model {
                     ->where("UID_link", $ud)
                     ->where("UID_email", $email)
                     ->get();
-        } else if ($transfer_q->num_rows() == 0) {
+        }
+        if ($transfer_q->num_rows() == 0) {
             return array('s' => '1');
         } else {
             $t_data = (array) $transfer_q->row();
-            $pass = $this->site->encryptPass($t_data[UID_pass]);
+            $pass = $this->site->encryptPass($t_data['UID_pass']);
+
             $this->db->trans_begin();
-            $this->db->insert(LOGIN_TABLE, array('UID' => $t_data['UID'], "UID_Username" => "$email", "UID_Password" => "$pass", "UID_AccountType" => "1", "UID_PRIVILEGE_TYPE" => "1"));
-            $this->db->delete(NEW_USER, array('UID' => $t_data['UID']));
-            $this->db->delete(INVITATION_REQUESTS, array('UID' => $t_data['UID']));
+            $x = $this->db->insert(LOGIN_TABLE, array('UID' => $t_data['UID'], "UID_Username" => "$email", "UID_Password" => "$pass", "UID_AccountType" => "1", "UID_PRIVILEGE_TYPE" => "1"));
+//            echo "<pre>";
+//            print_r($this->db->insert_id());
+//            echo "</pre>";
+            if ($this->db->get_where(NEW_USER, array('UID' => $t_data['UID']))->num_rows() > 0) {
+                echo "NEWUSER";
+                $this->db->delete(NEW_USER, array('UID' => $t_data['UID']));
+            }
+            if ($this->db->get_where(INVITATION_REQUESTS, array('UID' => $t_data['UID']))->num_rows() > 0) {
+                echo "INVITATION_REQUESTS";
+                $this->db->delete(INVITATION_REQUESTS, array('UID' => $t_data['UID']));
+            }
             if ($this->db->trans_status() === FALSE) {
                 $this->db->trans_rollback();
                 return array('s' => '0');

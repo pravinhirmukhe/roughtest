@@ -63,3 +63,12 @@ app.controller('notification', ['$scope', '$rootScope', '$http', function ($scop
 //        });
        
     }]);
+app.controller('subject', ['$scope', '$rootScope', '$http', 'Data', function ($scope, $rootScope, $http, Data) {
+        $scope.topic = [];
+        $scope.user = {};
+        $scope.getTopic = function (id) {
+            Data.GetTopic(id).success(function (d) {
+                $scope.topic = d;
+            });
+        };
+    }]);

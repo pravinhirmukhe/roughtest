@@ -1,5 +1,5 @@
 
-<div id="page-wrapper" class="gray-bg dashbard-1">
+<div id="page-wrapper" class="gray-bg dashbard-1" ng-controller="subject">
     <div class="content-main">
         <!--banner-->	
         <?php $this->load->view('admin/layout/breadcrumb') ?>
@@ -14,15 +14,28 @@
                                 <div class="row">
                                     <div class="form-group col-md-6">
                                         <div class="form-group">
-                                            <label>Topic Name</label><?php
-                                            $gr = array();
-                                            if ($topics) {
-                                                foreach ($topics as $g) {
-                                                    $gr[$g->topic_id] = $g->topic_name;
-                                                }
-                                            }
-                                            echo form_dropdown('topic_id', $gr, set_value('topic_id'), 'id="topic_id" class="form-control" placeholder="Select Topic"');
-                                            ?>
+                                            <label>Subject Name</label>
+                                                <select name='sub_id' ng-model="user.sub_id" data-placeholder='Subject Name'class="form-control" ng-change="getTopic(user.sub_id)">
+                                                    <option value="">Select Subject</option>
+                                                    <?php
+                                                    foreach ($subject as $r) {
+                                                        echo "<option value='" . $r->sub_id . "'>" . $r->sub_name . "</option>";
+                                                    }
+                                                    ?>
+                                                </select>
+                                            <span class="help-block"><?php echo form_error('sub_id'); ?></span>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <div class="form-group">
+                                            <label>Topic Name</label>
+                                                 <select name="topic_id" class="form-control">
+                                                    <option value="">Select Topic</option>
+                                                    <option value="{{t.topic_id}}" selected ng-repeat="t in topic">{{t.topic_name}}</option>
+                                                </select>
                                             <span class="help-block"><?php echo form_error('topic_id'); ?></span>
                                         </div>
                                     </div>

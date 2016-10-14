@@ -419,4 +419,77 @@ class System_user_controller extends MY_Controller {
         $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "User_view"));
         $this->admin_layout($this->data);
     }
+    
+    public function company_details(){
+        $user_id = $this->session->userdata('user_id');
+        $this->data['recruiterData'] = $this->sysuser->getUser($user_id);
+        
+        $this->data['template'] = "Company/company_details";
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Company Details"));
+        $this->admin_layout($this->data);
+    }
+     public function company(){
+        $this->data['template'] = "Company/company";
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Company Details"));
+        $this->admin_layout($this->data);
+    }
+    public function getCompanyData(){
+        $user_id = $this->session->userdata('user_id');
+        $detail_link = anchor('admin/Company-view/$1', '<i class="fa fa-file-text-o"></i> ' . 'Company Details');
+        $edit_link = anchor('admin/Company-edit/$1', '<i class="fa fa-file-text-o"></i> ' . 'Company edit');
+        $action = '<div class="text-center"><div class="btn-group text-left">'
+                . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
+                . 'Actions' . ' <i style="color:#fff" class="fa fa-caret-down"></i></button>
+		<ul class="dropdown-menu pull-right" role="menu">
+			<li>' . $detail_link . '</li>
+                        <li>' . $edit_link . '</li>
+			
+			</ul>
+		</div></div>';
+        $this->load->library('datatables');
+        $this->datatables
+                ->select($this->db->dbprefix('system_users') . ".id as id,company, website, location, email ,no_of_employee, active")
+                ->from("system_users")
+                ->where("system_users.id =".$user_id)
+                ->where("system_users.group_id =2")
+                ->group_by('system_users.id')
+                ->add_column("Actions", "<center><a href='" . site_url('auth/profile/$1') . "' class='tip' title='" . lang("edit_user") . "'><i class=\"fa fa-edit\"></i></a></center>", "id");
+        $this->datatables->add_column("Actions", $action, "id");
+        echo $this->datatables->generate();
+        
+    }
+    public function company_edit($id){
+        $this->data['id'] = $id;
+        $user_id = $this->session->userdata('user_id');
+        $this->data['companyData'] = $this->sysuser->getUser($user_id);
+        $this->data['template'] = "Company/company_edit";
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Menu Edit"));
+        $this->admin_layout($this->data);
+    }
+    
+    
+    public function company_update($id){
+        $this->form_validation->set_rules('first_name', 'First Name', 'required');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required');
+        $this->form_validation->set_rules('email', 'Email_Id', 'required|valid_email|callback_updateEmail');
+        $this->form_validation->set_rules('company', 'Company Name', 'required');
+        $this->form_validation->set_rules('phone', 'Phone', 'required|exact_length[10]');
+        $this->form_validation->set_rules('no_of_employee', 'No of Employee', 'required');
+        $this->form_validation->set_rules('website', 'Website', 'required');
+        $this->form_validation->set_rules('location', 'Location', 'required');
+        
+        if ($this->form_validation->run() == FALSE) {
+            $this->company_edit($id);
+        } else {
+            unset($_POST['id']);
+            $result = $this->sysuser->updateSystemUser($_POST, $id);
+            if ($result == true) {
+                $this->session->set_flashdata('message', array('title' => 'Success.', 'content' => 'Company Details Updated Successfully.', 'type' => 's'));
+                redirect(site_url() . 'admin/Company');
+            } else {
+                $this->session->set_flashdata('message', array('title' => 'Error.', 'content' => 'Company Details Updating Failed.', 'type' => 'e'));
+                redirect(site_url() . 'admin/Company');
+            }
+        }
+    }
 }

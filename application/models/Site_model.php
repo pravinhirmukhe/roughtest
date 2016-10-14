@@ -37,6 +37,7 @@ class Site_model extends MY_Model {
                 }
             }
         }
+        
         $this->db->where('parent_id', 0);
         if (!empty($usz)) {
             $this->db->where_in('id', $usz);
