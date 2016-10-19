@@ -1,0 +1,64 @@
+<div class="panel panel-default glass" style='border-color:#37a8df;' ng-controller="plannerController">
+    <style>
+        #datepickerP .datepicker{z-index:99999 !important;}
+    </style>
+    <div class="panel-heading glass" style='background: #37a8df;color:#fff;' ng-init="getCal()">
+        <a href="javascript: void(0)" ng-click="previous()" class='btn btn-defalut'><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a>
+        <a href="javascript: void(0)" ng-click="next()"class='btn btn-defalut' style='float: right;'><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+        <center><h3 class='panel-title' style="margin-top:-20px;"></h3></center>
+        <div class="clearfix"></div>
+    </div>
+    <a data-toggle="modal" data-target=".scheduler_model" class="btn default btn-block glass" data-toggle="tooltip" data-placement="top" title="Add to Planner" >
+        Set schedule <span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+    <hr/>
+    <!--<div ng-bind-html="cal"></div>-->
+    <div style="padding: 5px;">
+        <div id="calendar"></div>
+    </div>
+    <div ng-controller="schedulemodal" id="sch_modal" class="modal fade scheduler_model modal-md" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Set Schedule</h4>
+                </div>
+                <div class="modal-body">
+                    <center><div class='row'>
+                            <form ng-submit="save()">
+                                <div class='col-md-12 col-sm-9 col-xs-8'> 
+                                    <!--scheduler form-->
+                                    <div class="from" style="align:center;">
+                                        <div class="form-group from-inline">
+                                            <input type="text" datepicker id="schdate" class="form-control col-md-3 col-sm-9 col-xs-8 datepicker"  data-date-format="yyyy-mm-dd" placeholder="Select Date" >
+                                            <br/><br/><br/>
+                                            <select id="sub_id" ng-model="sche.sub_id" class="form-control" ng-change="refreshTopics(sche.sub_id)">
+                                                <option value="{{s.sub_id}}" ng-repeat="s in subjects">{{s.sub_name}}</option>
+                                            </select>   
+                                            <br/>
+                                            <select id="tid" class="form-control" ng-model="sche.tid">
+                                                <option value="{{t.topic_id}}" ng-repeat="t in topics">{{t.topic_name}}</option>
+                                            </select>
+                                            <br/>
+                                            <button type="submit" class='btn btn-primary btn-block glass'>Set Schedule</button>
+                                            <div id='result'></div>
+                                        </div>
+                                    </div>
+                                    <!--ends-->
+                                </div>    
+                            </form>
+                        </div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+                        $('#datepickerP').datepicker({
+                            format: "yyyy-mm",
+                            viewMode: "months",
+                            minViewMode: "months"
+                        });
+    </script>
+
+
+</div>

@@ -85,12 +85,7 @@
                                             <p id="expected_doj">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $jobData->expected_doj; ?></p>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Location</label>
-                                            <p id="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $jobData->location; ?></p>
-                                        </div>
-                                    </div>
+                                    
                                     
                                 </div>
                             <div class="row">

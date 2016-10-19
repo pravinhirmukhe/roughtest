@@ -60,7 +60,7 @@
                                     <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label>Phone</label>
-                                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="Phone" />
+                                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="Phone" maxlength="10" oninput="validateNumber(this);"/>
                                             <span class="help-block"><?php echo form_error('phone'); ?></span>
                                         </div>
                                     </div>
@@ -181,6 +181,14 @@
         //updated by neeta
         var textInput = e.value;
         textInput = textInput.replace(/[^A-Za-z ]/g, "");
+        e.value = textInput;
+        //end
+    }
+   
+    function validateNumber(e) {
+        //updated by neeta
+        var textInput = e.value;
+        textInput = textInput.replace(/[^0-9]/g, "");
         e.value = textInput;
         //end
     }

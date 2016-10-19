@@ -1,0 +1,60 @@
+<div ng-controller="homepage">
+    <div >
+        <style>
+            .active-home{background:#b9e1f4;border-top:2px solid #37a8df;color:#fff !important;}
+            .active-friends{background:#fff;border:none;}
+            .active-fbfriends{background:#fff;border:none;}
+        </style>
+        <div class="quote" role="alert">
+            <b>"</b>{{quote.quote}}<b>"</b>
+            - {{quote.author}}
+        </div>
+        <br/><br/>
+    </div>
+    <style>
+        .d{text-align: center;text-align: center;background:#fc6f4b;color:#fff;}
+    </style>
+    <div class="panel panel-default to_do_list">
+        <a href="#/planner">   <button class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Add to Planner" style="float:right ;height:38px;border-radius:24px;box-shadow:0px 0px 3px 0px #111; "><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></a>
+        <div class="panel-heading glass">
+            <h3 class='panel-title'><center>Today's To-Do List</center></h3></div>
+        <ul ng-show="todo.s == 2" class='list-group'><li class='list-group-item'><center><b>{{todo.msg}}</b></center></li></ul>
+        <table ng-show="todo.s == 1" class='table table-bordered table-hover'><tr><th class='d'>Sr.</th><th class='d' style=''>Subject</th><th class='d'>Chapter</th><th class='d'>Task</th></tr>
+            <tbody ng-repeat="to in todo.data.todo">
+                <tr ng-if="todo.data.dates.today == to.date" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td> 
+                    <td><a href="#/keyconcept/{{to.sid}}/{{to.id}}"> Key-Concepts</a></td>
+                </tr>
+                <tr ng-if="todo.data.dates.today == to.date" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td>
+                    <td><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 1)"> Exercise 1</a></td>
+                </tr>
+                <tr ng-if="todo.data.dates.one_day_before == to.date" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 2)"> Exercise 2</a></td>
+                </tr>
+                <tr ng-if="todo.data.dates.two_days_before == to.date" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 3)"> Exercise 3</a></td>
+                </tr>
+                <tr ng-if="to.date | in_array:todo.data.testdays" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="instructionsDppTpp('DPP', to.sid)"> Subject Test</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <span ng-show="todo.pro_pic == 1"> <hr><ul  class='list-group'><li class='list-group-item'><center><b>You haven't uploaded your profile picture yet !</b></center></li></ul></span>
+        <span ng-show="todo.toc == 0 && todo.s == 1"><hr><ul class='list-group'><li class='list-group-item'><center><b>Nothing on today's to-do list !</b></center></li></ul></span>
+    </div>
+</div>

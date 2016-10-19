@@ -39,7 +39,7 @@
                                                 <th class="col-xs-2"></th>
                                                 <th class="col-xs-1"></th>
                                                 <th class="col-xs-2"></th>
-                                                <th class="col-xs-2"></th>s
+                                                <th class="col-xs-2"></th>
                                                
                                                 <th style="width:80px; text-align:center;"></th>
                                             </tr>
@@ -54,7 +54,5 @@
     /*$(function(){
     $("#getData1").dataTable();
   })*/
-  $('#getData1').dataTable( {
-    searching: false
-} );
+  
 </script>

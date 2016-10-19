@@ -1,4 +1,4 @@
-<div id="page-wrapper" class="gray-bg dashbard-1" ng-controller="rank">
+<div id="page-wrapper" class="gray-bg dashbard-1">
     <div class="content-main">
         <!--banner-->	
         <?php $this->load->view('admin/layout/breadcrumb') ?>
@@ -14,7 +14,7 @@
                                     <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label>Subject Name</label>
-                                                <select name='subid' ng-model="user.sub_id" data-placeholder='Subject Name' class="form-control" ng-change="getTopic(user.sub_id)">
+                                                <select name='subid' data-placeholder='Subject Name' class="form-control">
                                                     <option value="">Select Subject</option>
                                                     <?php
                                                     foreach ($subject as $r) {
