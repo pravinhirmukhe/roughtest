@@ -7,10 +7,12 @@ if ($_REQUEST['domain'] == 'global') {
     $uid_data = json_decode($friends_data_arr['F_UID']);
 }
 $std_obj_marks = (array) $this->site->getRespectiveMarksArr($_REQUEST['type']);
+
 $marks = array();
 foreach ($std_obj_marks as $key1 => $val1) {
     $marks[$key1] = (array) $val1;
 }
+
 $subid = $_REQUEST['subid'];
 $filtered_uid_arr = array();
 $data2sort = array();
@@ -39,7 +41,8 @@ $last_marks = -100; //just a start
                 break;
             } else {
                 $current_user = $filtered_uid_arr[$i];
-                $f_d_fetch = $this->getUserInfo($current_user);
+                $f_d_fetch = $this->site->getUserInfo($current_user);
+               
                 //for the rowspan value we can check in data2sort array that how many of such marks entries are present for that subject 
                 if ($last_marks != $data2sort[$current_user]) {
                     $last_marks = $data2sort[$current_user];
@@ -50,9 +53,9 @@ $last_marks = -100; //just a start
                                     <img class='media-object f_pic wow rotateIn' src='<?= IMGURL ?><?php echo $f_d_fetch['UID_Pro_Pic']; ?>' width='84' height='84'>
                                 </div>
                                 <div class='media-body wow rollIn' style='padding:3px;'>
-                                    <a href='#/profile/<?= $val ?>'><h4 class='media-heading'><?php echo "$f_d_fetch[UID_FirstName] $f_d_fetch[UID_MiddleName] $f_d_fetch[UID_LastName]"; ?></h4></a>
+                                    <a href='#/profile/<?= $f_d_fetch['UID'] ?>'><h4 class='media-heading'><?php echo "$f_d_fetch[UID_FirstName] $f_d_fetch[UID_MiddleName] $f_d_fetch[UID_LastName]"; ?></h4></a>
                                     <div id='button_<?php echo $f_d_fetch['UID']; ?>'>
-                                        <button class='btn btn-default' href='#/profile/<?php echo $current_user; ?>'>View Profile</button>
+                                        <button class='btn btn-default' href='#/profile/<?php echo $f_d_fetch['UID']; ?>'>View Profile</button>
                                     </div>
                                 </div></div>
                         </td></tr>
@@ -66,9 +69,9 @@ $last_marks = -100; //just a start
                                     <img class='media-object f_pic wow rotateIn' src='<?= IMGURL ?><?php echo $f_d_fetch['UID_Pro_Pic']; ?>' width='84' height='84'>
                                 </div>
                                 <div class='media-body wow rollIn' style='padding:3px;'>
-                                    <a href='#/profile/<?= $val ?>'><h4 class='media-heading'><?php echo "$f_d_fetch[UID_FirstName] $f_d_fetch[UID_MiddleName] $f_d_fetch[UID_LastName]"; ?></h4></a>
+                                    <a href='#/profile/<?= $f_d_fetch['UID'] ?>'><h4 class='media-heading'><?php echo "$f_d_fetch[UID_FirstName] $f_d_fetch[UID_MiddleName] $f_d_fetch[UID_LastName]"; ?></h4></a>
                                     <div id='button_<?php echo $f_d_fetch['UID']; ?>'>
-                                        <button class='btn btn-default' href='#/profile/<?php echo $current_user; ?>'>View Profile</button>
+                                        <button class='btn btn-default' href='#/profile/<?php echo $f_d_fetch['UID']; ?>'>View Profile</button>
                                     </div>
                                 </div></div>
                         </td></tr>

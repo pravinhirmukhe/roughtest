@@ -158,7 +158,7 @@ class User_controller extends MY_Controller {
             $msg = $this->load->view('emails/forgetpass', $rs['data'], true);
             $e = $this->sendMail($rs['data']['email'], 'RoughSheet: Recover Account', "$msg", 'RoughSheet', 'recover@roughsheet.com');
             if ($e['s']) {
-                echo json_encode(array('s' => '1', 'msg' => "Email Send Successfuly!"));
+                echo json_encode(array('s' => '1', 'msg' => "Email Sent Successfuly!"));
             } else {
                 echo json_encode(array('s' => '0', 'msg' => "Email Sending Failed! ($e[err])"));
             }
@@ -232,21 +232,58 @@ class User_controller extends MY_Controller {
             $from = $d['from'];
             $from_name = $d['from_name'];
             $i_code_present = $d['i_code_present'];
-            $msg = $this->load->view('emails/registration', $d, true);
-            $e = $this->sendMail($to, "Welcome! Let's talk about you.", $msg, $from_name, $from);
+
+            $invite = array(
+                'link' => "http://www.roughsheet.com/",
+                'img' => "http://www.roughsheet.com/assets/img/rs_logo_1.png",
+                'name' => "Invite in Rough sheet.",
+                'caption' => "Invitation.",
+                'caption' => "Invitation.",
+                'msg' => "Here is invitation code for free signup on roughsheet website. \"" . $d['invitation_code'] . "\""
+            );
+//            $msg = $this->load->view('emails/registration', $d, true);
+//            $e = $this->sendMail($to, "Welcome! Let's talk about you.", $msg, $from_name, $from);
 //            sleep(1);
 //            if (trim($i_code_present) == "yes") {
 //                $msgx = $this->load->view('emails/registration_verify', $d, true);
 //                $e = $this->sendMail($to, "Welcome to RoughSheet", $msgx, $from_name, "donotreply@roughsheet.com");
 //            }
-            if ($e['s']) {
-                echo json_encode(array('s' => '1'));
+            if (1) {
+                echo json_encode(array('s' => '1', 'fr' => $this->getFBFr(), 'uid' => 1, 'invite' => $invite));
             } else {
                 echo json_encode(array('s' => 2, 'msg' => $e['err']));
             }
         } else {
             echo json_encode(array('s' => '0'));
         }
+    }
+
+    public function getFBFr($uid) {
+        $f_d = $this->db->get_where(FRIENDS_TABLE, array('UID' => $uid));
+        $ef_arr = array(); //existing friends array
+        $fr_arr = array(); //Recieved requests array
+        $sfr_arr = array(); //sent friends request
+        if ($f_d->num_rows() > 0) {
+            $ef_arr = json_decode($f_d->row()->F_UID); //existing friends array
+            $fr_arr = json_decode($f_d->row()->FR_UID); //Recieved requests array
+            $sfr_arr = json_decode($f_d->row()->SFR_UID); //sent friends request
+            $ef_arr_d_a = $this->db->select('fb_id')->where_in(array('UID', $ef_arr))->get(USER_INFO)->result_array();
+            foreach ($ef_arr_d_a as $x) {
+                array_push($ef_arr_d, $x['fb_id']);
+            }
+            $fr_arr_d_a = $this->db->select('fb_id')->where_in(array('UID', $fr_arr))->get(USER_INFO)->result_array();
+            foreach ($fr_arr_d_a as $x) {
+                array_push($fr_arr_d, $x['fb_id']);
+            }
+            $sfr_arr_d_a = $this->db->select('fb_id')->where_in(array('UID', $sfr_arr))->get(USER_INFO)->result_array();
+            foreach ($sfr_arr_d_a as $x) {
+                array_push($sfr_arr_d, $x['fb_id']);
+            }
+        }
+        return array(
+            'ef_arr' => $ef_arr, 'fr_arr' => $fr_arr, 'sfr_arr' => $sfr_arr,
+            'ef_arr_d' => $ef_arr_d, 'fr_arr_d' => $fr_arr_d, 'sfr_arr_d' => $sfr_arr_d
+        );
     }
 
     public function resendAct() {
@@ -274,10 +311,10 @@ class User_controller extends MY_Controller {
             $d['ic'] = $rs['invitation_code'];
             $msg = $this->load->view('emails/icmail', $d, true);
             $e = $this->sendMail($to, "Your Invitation Code", $msg, "RoughSheet", "donotreply@roughsheet.com");
-            echo"<center><h3><img src='http://" . site_url() . "/assets/img/rs_sm_logo.png' width='300px' height='90px'><table width='100%'> <tr><td style='width:100%;background:green;color:#fff;font-size:25px;'><center>Your account is verified successfully. </center></span></td></tr></table><br>Please wait, you will be redirected shortly.<br> Please click the following link if it is taking time <a href='http://" . site_url() . "/index.php'>Click Here</a> </h3></center>";
+            echo"<center><h3><img src='" . site_url() . "assets/img/rs_sm_logo.png' width='300px' height='90px'><table width='100%'> <tr><td style='width:100%;background:green;color:#fff;font-size:25px;'><center>Your account is verified successfully. </center></span></td></tr></table><br>Please wait, you will be redirected shortly.<br> Please click the following link if it is taking time <a href='" . site_url() . "'>Click Here</a> </h3></center>";
             echo"<script>
                         function gotol(){
-                            window.location.assign('" . site_url() . "/index.php')
+                            window.location.assign('" . site_url() . "')
                         }
                         setTimeout(gotol, 2000);</script>";
         } else {

@@ -9,7 +9,7 @@
         <meta name="author" content="">
         <link rel="icon" href="<?= ASSETSURL ?>images/tab_icon.png">
         <title><?= SITENAME ?></title>
-        <!-- Bootstrap core CSS -->
+        <!-- Bootstrap core CSS --> 
         <link href="<?= ASSETSURL ?>css/bootstrap.css" rel="stylesheet">
         <link href="<?= ASSETSURL ?>css/datepicker.css" rel="stylesheet">
         <link href="<?= ASSETSURL ?>css/animate.min.css" rel="stylesheet">
@@ -38,8 +38,8 @@
         <script src="animation-legacy-support.js"></script>
     <![endif]-->
         <script>var appurl = "application/views/user/ang-app";
-            var cur_url = "<?= current_url() ?>";
-            var FBID = "<?= $this->session->userdata('FBID'); ?>";</script>
+                    var cur_url = "<?= current_url() ?>";
+                    var FBID = "<?= $this->session->userdata('FBID'); ?>";</script>
         <script src="<?= ASSETSURL ?>js/ajax_func.js"></script> 
         <link href="http://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet" type="text/css">
         <link href="<?= ASSETSURL ?>css/custom.css" rel="stylesheet" type="text/css">
@@ -60,16 +60,16 @@
         <script src="<?= ANGULARURL ?>route.js" type="text/javascript"></script>
         <script>
 
-            var verifyCallback = function (response) {
-                $('#responce-captcha').val(response);
-            };
-            var onloadCallback = function () {
-                grecaptcha.render('m-recaptcha', {
+                    var verifyCallback = function (response) {
+                    $('#responce-captcha').val(response);
+                    };
+                    var onloadCallback = function () {
+                    grecaptcha.render('m-recaptcha', {
                     'sitekey': '6Lc0RAcUAAAAAGsDDPfoe-nnS1YoVCnPCdHHEU_t',
-                    'callback': verifyCallback,
-                    'theme': 'light'
-                });
-            };</script>
+                            'callback': verifyCallback,
+                            'theme': 'light'
+                    });
+                    };</script>
     </head>
     <body data-spy="scroll" data-target=".navbar-default" style="position:inherit;" ng-app="rough">
         <!-- Fixed navbar -->
@@ -107,7 +107,8 @@
                             <img src="<?= ASSETSURL ?>images/rs_logo_1.png" class="r_big_logo wow fadeInLeft"  alt="roughsheet"/>
                             <!--<h1 class="welcome animated bounceInUp" style="color:#111;">Welcome to Roughsheet</h1>      -->
                             <h1 style='color:#37a8df;' class="wow fadeIn home_h1">Want to join us?</h1></center>
-                        <a data-toggle="modal" data-target=".reg_model" class="btn btn-success btn-lg">Sign up</a></br></br>
+                        <!--<a data-toggle="modal" data-target=".invitefbfr" class="btn btn-success btn-lg">Sign up</a></br></br>-->
+                        <a href="javascript:void(0)" ng-click="fb()" class="btn btn-primary">Sign Up with Facebook</a></br></br>
                         <a href="#features" class='btn btn-defalut btn-info btn-lg' style="border-radius:50px;">
                             <!--<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>-->
                             Learn More
@@ -143,12 +144,12 @@
                                     <button type="submit" name=submit class="btn btn-block btn-default" style="width:100px;">Log in</button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div  style="float:left;">
-                                    <a href="javascript:void(0)" ng-click="fb()" class="btn btn-primary">Facebook</a>
-                                    <!--<a href="javascript:void(0)" class="btn btn-danger">Google</a>-->
-                                </div>
-                            </div>
+                            <!--                            <div class="form-group">
+                                                            <div  style="float:left;">
+                            
+                                                                <a href="javascript:void(0)" class="btn btn-danger">Google</a>
+                                                            </div>
+                                                        </div>-->
                             <!--
                             <div class="form-group">
                               <div  style="float:left">
@@ -477,7 +478,7 @@
             <div class="modal-dialog modal-lg" >
                 <div class="modal-content" >
                     <div class="modal-header" >
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
                         <center><h4 class="modal-title" id="myModalLabel">Sign Up</h4></center>
                     </div>
                     <div class="modal-body" style="background:#f4f4f4;" ng-controller="register">
@@ -523,10 +524,10 @@
                                             <div class="form-group form-inline">
                                                 <label for="dob" class="col-sm-4 col-md-4 control-label">
                                                     Date of birth </label>
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-4">
                                                     <!-- <input type="text"  class="form-control datepicker" name="dob"  readonly/> -->
                                                     <select id="dob_y" name='dob_y' class='form-control  input-sm col-xs-1' style='width:73px;' ng-model="reg.dob.y">
-                                                        <option value="{{y}}" ng-repeat="y in []| range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
+                                                        <option value="{{y}}" ng-repeat="y in [] | range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
                                                     </select>
                                                     <select id="dob_m" class='form-control input-sm' style='width:90px;' name='dob_m' ng-change="getCaldays(reg.dob.y, reg.dob.m)" ng-model="reg.dob.m" >
                                                         <option value='0'>Month</option>
@@ -539,6 +540,81 @@
                                                         </select>
                                                     </span>
                                                 </div><span class="label label-danger animated fadeIn" style="position: relative;left:540;top:-24" id="err_dob"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="email" class="col-sm-4 control-label">
+                                                    Email </label>
+                                                <div class="col-sm-6 col-md-3">  
+                                                    <input type=email name="email" class="form-control" placeholder="Email" ng-model="reg.regemail" id="regemail"/>
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_email"></span></div>
+                                            <div class="form-group">
+                                                <label for="gender" class="col-sm-4 control-label">  
+                                                    Password
+                                                </label>
+                                                <div class="col-sm-6 col-md-3">
+                                                    <input type=password name="u_pass" class="form-control" placeholder="Password" ng-model="reg.password" id="password" />
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_u_pass"></span></div>
+                                            <div class="form-group">
+                                                <label for="gender" class="col-sm-4 control-label">  
+                                                    Confirm-Password
+                                                </label>
+                                                <div class="col-sm-6 col-md-3"><input type=password name="u_pass_confirm" ng-model="reg.repass"  id="repass" class="form-control" placeholder="Confirm password"/>
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_u_pass_confirm"></span></div> 
+                                        </span>
+                                        <!-- page 1 -->
+                                        <!-- page 2 -->
+                                        <span id="page2" style="display:none;">
+
+                                            <div class="form-group">
+                                                <label for="location" class="col-sm-4 control-label">
+                                                    Location </label>
+                                                <div class="col-sm-6 col-md-3">
+                                                    <select  class='form-control input-sm' name='dob_m' ng-change="getInstitute(reg.locations)" ng-model="reg.locations" id="locations" >
+                                                        <option value='other'>---Other---</option>
+                                                        <option value="{{c.city_name}}" ng-repeat="c in cities">{{c.city_name}}</option>
+                                                    </select>
+                                                    <input type=text name="location" ng-if="reg.locations == 'other'" class="form-control" placeholder="Location" ng-model="reg.location" id="location" />
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
+                                            </div>
+                                            <!--                                            <div class="form-group">
+                                                                                            <label for="currently" class="col-sm-4 control-label">
+                                                                                                Currently </label>
+                                                                                            <div class="col-sm-6 col-md-3">  
+                                                                                                <input type=radio name="currently" value="1" ng-model="reg.currently" id="currently" /> Studying in school <br>
+                                                                                                <input type=radio name="currently" value="2" ng-model="reg.currently" id="currently"/> Studying in college <br>
+                                                                                                <input type=radio name="currently" value="3" ng-model="reg.currently" id="currently"/> Working.
+                                                                                            </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_currently"></span>
+                                                                                        </div>-->
+                                            <div class="form-group">
+                                                <label for="location" class="col-sm-4 control-label">
+                                                    Institute Name </label>
+                                                <div class="col-sm-6 col-md-3">  
+                                                    <select id="institutes" class='form-control input-sm' name='dob_m' ng-model="reg.institutes" >
+                                                        <option value='other'>---Other---</option>
+                                                        <option value="{{c.institute}}" ng-repeat="c in institute">{{c.institute}}</option>
+                                                    </select>
+                                                    <input type=text name="institute" class="form-control" ng-if="reg.institutes == 'other'" placeholder="Institute Name" ng-model="reg.institute" id="institute"/>
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="location" class="col-sm-4 control-label">
+                                                    Branch Name </label>
+                                                <div class="col-sm-6 col-md-3">  
+                                                    <select id="branchs" class='form-control input-sm' name='dob_m' ng-model="reg.branchs" >
+                                                        <option value='other'>---Other---</option>
+                                                        <option value="{{b.branch_name}}" ng-repeat="b in branchs">{{b.branch_name}}</option>
+                                                    </select>
+                                                    <input type=text name="branch" class="form-control" ng-if="reg.branchs == 'other'" placeholder="Branch Name" ng-model="reg.branch" id="branch"/>
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="location" class="col-sm-4 control-label">
+                                                    Graduation Year </label>
+                                                <div class="col-sm-6 col-md-3">  
+                                                    <select ui-select2 ng-model="reg.graduationyear" name="graduationyear" class="form-control" id="graduationyear">
+                                                        <option value="{{y}}" ng-repeat="y in [] | range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
+                                                    </select>
+                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
                                             </div>
                                             <div class="form-group">
                                                 <label for="i_code" class="col-sm-4 control-label">Do you have invitation code ?</label> 
@@ -568,80 +644,6 @@
 
                                                 <span class="label label-danger animated fadeIn" style="position: relative;top:100;left30;" id="err_captcha"></span>
                                             </div>
-                                        </span>
-                                        <!-- page 1 -->
-                                        <!-- page 2 -->
-                                        <span id="page2" style="display:none;">
-                                            <div class="form-group">
-                                                <label for="email" class="col-sm-4 control-label">
-                                                    Email </label>
-                                                <div class="col-sm-6 col-md-3">  
-                                                    <input type=email name="email" class="form-control" placeholder="Email" ng-model="reg.regemail" id="regemail"/>
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_email"></span></div>
-                                            <div class="form-group">
-                                                <label for="gender" class="col-sm-4 control-label">  
-                                                    Password
-                                                </label>
-                                                <div class="col-sm-6 col-md-3">
-                                                    <input type=password name="u_pass" class="form-control" placeholder="Password" ng-model="reg.password" id="password" />
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_u_pass"></span></div>
-                                            <div class="form-group">
-                                                <label for="gender" class="col-sm-4 control-label">  
-                                                    Confirm-Password
-                                                </label>
-                                                <div class="col-sm-6 col-md-3"><input type=password name="u_pass_confirm" ng-model="reg.repass"  id="repass" class="form-control" placeholder="Confirm password"/>
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_u_pass_confirm"></span></div> 
-                                            <div class="form-group">
-                                                <label for="location" class="col-sm-4 control-label">
-                                                    Location </label>
-                                                <div class="col-sm-6 col-md-3">
-                                                    <select id="dob_m" class='form-control input-sm' name='dob_m' ng-change="getInstitute(reg.locations)" ng-model="reg.locations" >
-                                                        <option value='other'>---Other---</option>
-                                                        <option value="{{c.city_name}}" ng-repeat="c in cities">{{c.city_name}}</option>
-                                                    </select>
-                                                    <input type=text name="location" ng-if="reg.locations == 'other'" class="form-control" placeholder="Location" ng-model="reg.location" id="location" />
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
-                                            </div>
-                                            <!--                                            <div class="form-group">
-                                                                                            <label for="currently" class="col-sm-4 control-label">
-                                                                                                Currently </label>
-                                                                                            <div class="col-sm-6 col-md-3">  
-                                                                                                <input type=radio name="currently" value="1" ng-model="reg.currently" id="currently" /> Studying in school <br>
-                                                                                                <input type=radio name="currently" value="2" ng-model="reg.currently" id="currently"/> Studying in college <br>
-                                                                                                <input type=radio name="currently" value="3" ng-model="reg.currently" id="currently"/> Working.
-                                                                                            </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_currently"></span>
-                                                                                        </div>-->
-                                            <div class="form-group">
-                                                <label for="location" class="col-sm-4 control-label">
-                                                    Institute Name </label>
-                                                <div class="col-sm-6 col-md-3">  
-                                                    <select id="dob_m" class='form-control input-sm' name='dob_m' ng-model="reg.institutes" >
-                                                        <option value='other'>---Other---</option>
-                                                        <option value="{{c.institute}}" ng-repeat="c in institute">{{c.institute}}</option>
-                                                    </select>
-                                                    <input type=text name="institute" class="form-control" ng-if="reg.institutes == 'other'" placeholder="Institute Name" ng-model="reg.institute" id="institute"/>
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="location" class="col-sm-4 control-label">
-                                                    Branch Name </label>
-                                                <div class="col-sm-6 col-md-3">  
-                                                    <select id="dob_m" class='form-control input-sm' name='dob_m' ng-model="reg.branchs" >
-                                                        <option value='other'>---Other---</option>
-                                                        <option value="{{b.branch_name}}" ng-repeat="b in branchs">{{b.branch_name}}</option>
-                                                    </select>
-                                                    <input type=text name="branch" class="form-control" ng-if="reg.branchs == 'other'" placeholder="Branch Name" ng-model="reg.branch" id="branch"/>
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="location" class="col-sm-4 control-label">
-                                                    Graduation Year </label>
-                                                <div class="col-sm-6 col-md-3">  
-                                                    <select ui-select2 ng-model="reg.graduationyear" name="graduationyear" class="form-control" id="graduationyear">
-                                                        <option value="{{y}}" ng-repeat="y in []| range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
-                                                    </select>
-                                                </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
-                                            </div>
                                             <div class="form-group" ng-if="reg.i_code_present == 'no'">
                                                 <label for="location" class="col-sm-4 control-label">
                                                     Pay : </label>
@@ -649,6 +651,13 @@
                                                     <input ng-show="(!reg.payment_id || reg.payment_id == '')" type="button" name="pay" id="rzp-button1" value="Pay" class="btn btn-danger" ng-click="pay()" />
                                                     <label ng-show="reg.payment_id || reg.payment_id != ''" class="label label-success">Payment Successfully!</label>
                                                 </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="location" class="col-sm-4 control-label">
+                                                </label>
+                                                <div class="col-sm-6 col-md-3">  
+                                                    <span ng-show="!flag" class="label label-danger">Please Check back page for errors!</span>
+                                                </div>
                                             </div>
                                         </span>
                                         <input type="button" class="btn" id="back" onclick="prevStep()" style="float:left;display:none;" value=" < Back ">
@@ -661,7 +670,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer" style="border-top:solid 2px #febf10;">
-                                <center>   By signing up, you agree to our <a href="#" onclick="window.open('app/legal_docs/Terms_Of_Use.html');">Terms of use</a> and <a href=# onclick="window.open('app/legal_docs/Privacy_Policy.html');">Privacy Policy</a>.
+                                <center>   By signing up, you agree to our <a href="#" onclick="window.open(site_url + 'legal_docs/Terms_Of_Use.html');">Terms of use</a> and <a href=# onclick="window.open(site_url + 'legal_docs/Privacy_Policy.html');">Privacy Policy</a>.
                                 </center>
                             </div>
                         </form>
@@ -684,6 +693,69 @@
                         <div class="modal-footer" style="border-top:solid 2px #febf10;">
                             <center>   By signing up, you agree to our <a href="#" onclick="window.open('app/legal_docs/Terms_Of_Use.html');">Terms of use</a> and <a href=# onclick="window.open('app/legal_docs/Privacy_Policy.html');">Privacy Policy</a>.
                             </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg invitefbfr" id="invitefbfr" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="background: #f8f8f8;opacity: 1" >
+            <div class="modal-dialog modal-lg" >
+                <div class="modal-content" >
+                    <div class="modal-header" >
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <center><h4 class="modal-title" id="myModalLabel">Sign Up</h4></center>
+                    </div>
+                    <div class="modal-body" style="background:#f4f4f4;" >
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6">
+                                <div class='panel panel-primary'>
+                                    <div class='panel-heading'>
+                                        <h3 class='panel-title '>
+                                            <span class="col-md-11"><center>Roughsheet Friends</center></span>
+                                            <div class="clearfix"></div>
+                                    </div>
+                                    <div class='panel-body'>
+                                        <div class='media col-md-12' ng-repeat="f in fb_friends" style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                                            <div class='media-left'>
+                                                <img class='media-object f_pic' src='{{f.img}}' width='84' height='84'>
+                                            </div>
+                                            <div class='media-body' style='padding:3px;'>
+                                                <a href='{{f.profile}}' target="_blank"><h4 class='media-heading'>{{f.name}}</h4></a>
+                                                <div id='button_{{f.id}}'>
+                                                    <span ng-if="f.id | in_array:rsfbfr.sfr_arr_d">
+                                                        <button class='btn btn-default' disabled >Request Sent</button>
+                                                    </span>
+                                                    <span ng-if="!(f.id | in_array:rsfbfr.ef_ar_dr) && !(f.id | in_array:rsfbfr.fr_arr_d) && !(f.id | in_array:rsfbfr.sfr_arr_d)">
+                                                        <button class='btn btn-default' ng-click="addFbFriend(f.id)">Add Friend</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class='btn btn-success' ng-click="addFbFriend(0, fbids)">Add All Friend</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-6"> 
+                                <div class='panel panel-primary'>
+                                    <div class='panel-heading'>
+                                        <h3 class='panel-title '>
+                                            <span class="col-md-11"><center>Facebook Friends</center></span>
+                                            <div class="clearfix"></div>
+                                    </div>
+                                    <div class='panel-body'>
+                                        <!--<div id="facebook_invite"></div>-->
+                                        <!--                                        <div class='media col-md-12' ng-repeat="f in fbfrfriends" style='padding:0px;box-shadow:0 0 15px #e7e7e7;border-radius:50px 0px 0px 50px;'>
+                                                                                    <div class='media-left'>
+                                                                                        <img class='media-object f_pic' src='{{f.img}}' width='84' height='84'>
+                                                                                    </div>
+                                                                                    <div class='media-body' style='padding:3px;'>
+                                                                                        <a href='' target="_blank"><h4 class='media-heading'>{{f.name}}</h4></a>
+                                                                                    </div>
+                                                                                </div>-->
+                                        <button class="btn btn-primary btn-large" ng-click="getfbinvte()">Send Invitation To Friends</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -751,7 +823,7 @@
                                                 <div class="form-group">
                                                     <label for="fb_link" class="col-sm-4 control-label">Your Email:</label> 
                                                     <div class="col-sm-8">
-                                                        <input type="email" name="fb_link" class="col-md-8 form-control" placeholder="Enater Email" ng-model="forgetemail" id="fb_link" />
+                                                        <input type="email" name="fb_link" class="col-md-8 form-control" placeholder="Enter Email" ng-model="forgetemail" id="fb_link" />
                                                     </div>
                                                 </div>
                                             </span>
@@ -808,22 +880,22 @@
         <script type="text/javascript" src="<?= ASSETSURL ?>js/jquery.newsWidget.js"></script> 
         <!--  on click tour -->
         <script>
-            if ($(window).width() > 999) {
-                $("#take_tour").click(function () {
-                    $('#tour').crumble();
-                });
-                $("#take_tour1").click(function () {
-                    $('#tour').crumble();
-                });
+                    if ($(window).width() > 999) {
+            $("#take_tour").click(function () {
+            $('#tour').crumble();
+            });
+                    $("#take_tour1").click(function () {
+            $('#tour').crumble();
+            });
             }
         </script>
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.datepicker').datepicker();
-            $('.datepicker').on('changeDate', function (ev) {
-                $(this).datepicker('hide');
-            });
+        $('.datepicker').datepicker();
+                $('.datepicker').on('changeDate', function (ev) {
+        $(this).datepicker('hide');
+        });
         })
     </script>
     <!--    <script>
@@ -844,35 +916,35 @@
     <!--
     <!-- EASING SCROLL SCRIPTS PLUGIN  -->
     <script>
-        new WOW().init();
-        wow = new WOW(
+                new WOW().init();
+                wow = new WOW(
                 {
-                    boxClass: 'wow', // default
-                    animateClass: 'animated', // default
-                    offset: 0, // default
-                    mobile: true, // default
-                    live: true        // default
+                boxClass: 'wow', // default
+                        animateClass: 'animated', // default
+                        offset: 0, // default
+                        mobile: true, // default
+                        live: true        // default
                 }
-        )
-        wow.init();</script>
+                )
+                wow.init();</script>
     <script>
-        $(function () {
-            $('.scrollclass a').bind('click', function (event) { //just pass scrollclass in design and start scrolling
+                $(function () {
+                $('.scrollclass a').bind('click', function (event) { //just pass scrollclass in design and start scrolling
                 var $anchor = $(this);
-                $('html, body').stop().animate({
-                    scrollTop: $($anchor.attr('href')).offset().top
+                        $('html, body').stop().animate({
+                scrollTop: $($anchor.attr('href')).offset().top
                 }, 1000, 'easeInOutQuad');
-                event.preventDefault();
-            });
-        })
-        $(document).ready(function () {
-            $("body").tooltip({selector: '[data-toggle=tooltip]'});
+                        event.preventDefault();
+                });
+                })
+                $(document).ready(function () {
+        $("body").tooltip({selector: '[data-toggle=tooltip]'});
         });</script>
     <script>
-        $(document).ready(function () {
-            $(".search_toggle").click(function () {
-                $(".hidden-lg").toggle();
-            });
+                $(document).ready(function () {
+        $(".search_toggle").click(function () {
+        $(".hidden-lg").toggle();
+        });
         });</script>
     <script>
     </script>

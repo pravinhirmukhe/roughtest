@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 //window.fbAsyncInit = function () {
+fbinit = function () {
     FB.init({
         appId: "951223461670082",
         status: true,
@@ -11,6 +12,7 @@
         xfbml: true,
         version: 'v2.7'
     });
+}
 //};
 app.filter('range', function () {
     return function (input, total) {
@@ -56,24 +58,10 @@ app.factory('myInterceptor',
                     return response; // or $q.when(config);
                 },
                 'requestError': function (rejection) {
-                    // an error happened on the request
-                    // if we can recover from the error
-                    // we can return a new request
-                    // or promise
-                    return response; // or new promise
-                    // Otherwise, we can reject the next
-                    // by returning a rejection
-                    // return $q.reject(rejection);
+                    return response;
                 },
                 'responseError': function (rejection) {
-                    // an error happened on the request
-                    // if we can recover from the error
-                    // we can return a new response
-                    // or promise
-                    return rejection; // or new promise
-                    // Otherwise, we can reject the next
-                    // by returning a rejection
-                    // return $q.reject(rejection);
+                    return rejection;
                 }
             };
             return interceptor;
@@ -81,6 +69,7 @@ app.factory('myInterceptor',
 app.factory('facebookService', function ($q) {
     return {
         getLogin: function () {
+            fbinit();
             var deferred = $q.defer();
             FB.login(function (response) {
                 if (response.authResponse) {
@@ -96,6 +85,7 @@ app.factory('facebookService', function ($q) {
             return deferred.promise;
         },
         getFBFriends: function () {
+            fbinit();
             var deferred = $q.defer();
             FB.api('/me/friends', function (response) {
                 if (!response || response.error) {
@@ -105,9 +95,54 @@ app.factory('facebookService', function ($q) {
                 }
             });
             return deferred.promise;
+        },
+        getFBinviFriends: function () {
+            fbinit();
+            var deferred = $q.defer();
+            FB.api('/me/taggable_friends', {limits: 10}, function (response) {
+                if (!response || response.error) {
+                    deferred.reject('Error occured');
+                } else {
+                    deferred.resolve(response);
+                }
+            });
+            return deferred.promise;
+        },
+        getFBinvites: function ($data) {
+            fbinit();
+            FB.ui({method: 'feed', // <-- PROBLEM
+                link: $data.link,
+                picture: $data.img,
+                name: $data.name,
+                caption: $data.caption,
+                description: $data.msg
+            },
+            function (response) {
+                if (response.error_code) {
+                    alertify.errorAlert("<b style='color:red'>"+response.error_message+"</b>");
+                } else {
+                    alertify.alert('Success', "Post Successfully!");
+                }
+            });
         }
     }
 });
+app.directive('datepicker', function () {
+    return {
+        require: '?ngModel',
+        link: function (scope, el, attr, ngModel) {
+            $(el).datepicker({
+                onSelect: function (dateText) {
+                    var dateStrToSend = dateText.date.getFullYear() + '-' + (dateText.date.getMonth() + 1) + '-' + dateText.date.getDate();
+                    scope.$apply(function () {
+                        ngModel.$setViewValue(dateStrToSend);
+                    });
+                }
+            });
+        }
+    };
+});
+
 app.service('Data', function ($http) {
     this.Login = function ($data) {
         return $http.post(site_url + "User_controller/login", $data);
@@ -115,8 +150,12 @@ app.service('Data', function ($http) {
     this.GetPayGetWay = function ($data) {
         return $http.post(site_url + "User_controller/getPayGetWay", $data);
     };
+
     this.CheckUPass = function ($data) {
         return $http.post(site_url + "User_controller/checkpass", $data);
+    };
+    this.GetSchedule = function ($data) {
+        return $http.post(site_url + "Planner_controller/getSchedule", $data);
     };
     this.GetCities = function ($data) {
         return $http.post(site_url + "User_controller/getCities", $data);
@@ -185,6 +224,9 @@ app.service('Data', function ($http) {
     /*Planner*/
 
     /*Study Material*/
+    this.GetCompleteKc = function ($data) {
+        return $http.post(site_url + "Study_controller/getCompleteKc", $data);
+    };
     this.GetSubjectStudy = function ($data) {
         return $http.post(site_url + "Study_controller/getSubjects", $data);
     };
@@ -241,6 +283,9 @@ app.service('Data', function ($http) {
     };
     this.GetAddfriend = function ($data) {
         return $http.post(site_url + "Friends_controller/addfriend", $data);
+    };
+    this.GetAddFBfriend = function ($data) {
+        return $http.post(site_url + "Friends_controller/addFBfriend", $data);
     };
     this.SetPrivacySetting = function ($data) {
         return $http.post(site_url + "Friends_controller/setPrivacySetting", $data);

@@ -135,11 +135,13 @@ class User_model extends CI_Model {
 //        mysql_query("UNLOCK TABLES") or die(mysql_error());
 //        $enc_random = str_encrypt_n_decrypt($randomString, "enc");
         $email = array(
+            'id' => $uid_data['UID'],
             'to' => $data['email'],
             'from' => "hello@roughsheet.com",
             'from_name' => "RoughSheet",
             'enc_random' => $randomString,
-            'i_code_present' => $data['i_code_present']
+            'i_code_present' => $data['i_code_present'],
+            'invitation_code' => $invitation_code
         );
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -177,16 +179,13 @@ class User_model extends CI_Model {
 
             $this->db->trans_begin();
             $x = $this->db->insert(LOGIN_TABLE, array('UID' => $t_data['UID'], "UID_Username" => "$email", "UID_Password" => "$pass", "UID_AccountType" => "1", "UID_PRIVILEGE_TYPE" => "1"));
-//            echo "<pre>";
-//            print_r($this->db->insert_id());
-//            echo "</pre>";
-            if ($this->db->get_where(NEW_USER, array('UID' => $t_data['UID']))->num_rows() > 0) {
-                echo "NEWUSER";
-                $this->db->delete(NEW_USER, array('UID' => $t_data['UID']));
-            }
-            if ($this->db->get_where(INVITATION_REQUESTS, array('UID' => $t_data['UID']))->num_rows() > 0) {
-                echo "INVITATION_REQUESTS";
-                $this->db->delete(INVITATION_REQUESTS, array('UID' => $t_data['UID']));
+            if ($x) {
+                if ($this->db->get_where(NEW_USER, array('UID' => $t_data['UID']))->num_rows() > 0) {
+                    $this->db->delete(NEW_USER, array('UID' => $t_data['UID']));
+                }
+                if ($this->db->get_where(INVITATION_REQUESTS, array('UID' => $t_data['UID']))->num_rows() > 0) {
+                    $this->db->delete(INVITATION_REQUESTS, array('UID' => $t_data['UID']));
+                }
             }
             if ($this->db->trans_status() === FALSE) {
                 $this->db->trans_rollback();

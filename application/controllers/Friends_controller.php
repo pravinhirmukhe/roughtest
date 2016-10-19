@@ -254,6 +254,101 @@ class Friends_controller extends MY_Controller {
         }
     }
 
+    public function addFBfriend() {
+        $uid = $_POST['uid'];
+
+        $f_data = (array) $this->db->get_where(FRIENDS_TABLE, array('UID' => $uid))->row();
+
+//        $f_query = mysql_query("select * from " . FRIENDS_TABLE . " where UID='$uid'") or die(mysql_error());
+//        $f_data = mysql_fetch_assoc($f_query);
+        $f_arr = json_decode($f_data['SFR_UID']);
+        $f_arr_count = count($f_arr);
+        if ($_POST['id'] != 0) {
+            $f_uid = $this->db->select('UID')->get_where(USER_INFO, array('fb_id' => $_POST['id']))->row()->UID;
+        } else {
+            $f_uids = $this->db->select('UID')->where_in('fb_id', $_POST['ids'])->get(USER_INFO)->result_array();
+        }
+        $ef_arr = json_decode($f_data['F_UID']); //existing friends array
+        $fr_arr = json_decode($f_data['FR_UID']); //Recieved requests array
+        if (isset($f_uid)) {
+            if ($uid == $f_uid) {
+                //self requesting: so don't do anything.
+            } elseif (in_array($f_uid, $f_arr)) {
+//            echo"Friend Request Already Sent !";
+                echo json_encode(array('s' => "2", "msg" => "Friend Request Already Sent !"));
+            } elseif (in_array($f_uid, $ef_arr)) {
+//            echo"Already Friends !";
+                echo json_encode(array('s' => "3", "msg" => "Already Friends !"));
+            } elseif (in_array($f_uid, $fr_arr)) {
+//            echo"Confirm request of the user.";
+                echo json_encode(array('s' => "4", "msg" => "Confirm request of the user."));
+            } else {
+                if ($f_arr_count == 0) {
+                    $f_arr = array($f_uid);
+                } else {
+                    $f_arr[$f_arr_count] = $f_uid;
+                }
+                $enc_f_arr = json_encode($f_arr);
+                $x = $this->db->update(FRIENDS_TABLE, array('SFR_UID' => $enc_f_arr), array('UID' => $uid));
+//            mysql_query("Update " . FRIENDS_TABLE . " SET SFR_UID='$enc_f_arr' WHERE UID='$uid' ") or error_log(mysql_error());
+//            mysql_query("LOCK TABLES " . FRIENDS_TABLE . " WRITE");
+                $f_d = (array) $this->db->select('FR_UID')->get_where(FRIENDS_TABLE, array('UID' => $f_uid))->row();
+//            $f_q = mysql_query("select FR_UID from " . FRIENDS_TABLE . " WHERE UID='$f_uid'") or error_log(mysql_error());
+//            $f_d = mysql_fetch_assoc($f_q);
+                $fr_arr_d = json_decode($f_d['FR_UID']);
+                $fr_count = count($fr_arr_d);
+                $fr_arr_d[$fr_count] = $uid;
+                $enc_fr_arr = json_encode($fr_arr_d);
+                $x = $this->db->update(FRIENDS_TABLE, array('FR_UID' => $enc_fr_arr), array('UID' => $f_uid));
+//            mysql_query("UPDATE " . FRIENDS_TABLE . " SET FR_UID='$enc_fr_arr' WHERE UID='$f_uid'") or error_log(mysql_error());
+//            mysql_query("UNLOCK TABLES");
+//            if ($x) {
+//                echo $this->search();
+//            }
+//            echo"<button disabled class='btn btn-default'>Request Sent</button>";
+                if ($x) {
+                    echo json_encode(array('s' => "1", "msg" => "Request Send Successfully!!"));
+                } else {
+                    echo json_encode(array('s' => "0", "msg" => "Request Sending Failed!!"));
+                }
+            }
+        } else {
+
+            if ($f_arr_count == 0) {
+                foreach ($f_uids as $fid) {
+                    $f_arr[] = $fid['UID'];
+                }
+            } else {
+                foreach ($f_uids as $fid) {
+                    $f_arr[] = $fid['UID'];
+                }
+            }
+            $enc_f_arr = json_encode($f_arr);
+            $x = $this->db->update(FRIENDS_TABLE, array('SFR_UID' => $enc_f_arr), array('UID' => $uid));
+//            mysql_query("Update " . FRIENDS_TABLE . " SET SFR_UID='$enc_f_arr' WHERE UID='$uid' ") or error_log(mysql_error());
+//            mysql_query("LOCK TABLES " . FRIENDS_TABLE . " WRITE");
+            $f_d = (array) $this->db->select('FR_UID')->get_where(FRIENDS_TABLE, array('UID' => $f_uid))->row();
+//            $f_q = mysql_query("select FR_UID from " . FRIENDS_TABLE . " WHERE UID='$f_uid'") or error_log(mysql_error());
+//            $f_d = mysql_fetch_assoc($f_q);
+            $fr_arr_d = json_decode($f_d['FR_UID']);
+            $fr_count = count($fr_arr_d);
+            $fr_arr_d[$fr_count] = $uid;
+            $enc_fr_arr = json_encode($fr_arr_d);
+            $x = $this->db->update(FRIENDS_TABLE, array('FR_UID' => $enc_fr_arr), array('UID' => $f_uid));
+//            mysql_query("UPDATE " . FRIENDS_TABLE . " SET FR_UID='$enc_fr_arr' WHERE UID='$f_uid'") or error_log(mysql_error());
+//            mysql_query("UNLOCK TABLES");
+//            if ($x) {
+//                echo $this->search();
+//            }
+//            echo"<button disabled class='btn btn-default'>Request Sent</button>";
+            if ($x) {
+                echo json_encode(array('s' => "1", "msg" => "Request Send Successfully!!"));
+            } else {
+                echo json_encode(array('s' => "0", "msg" => "Request Sending Failed!!"));
+            }
+        }
+    }
+
     public function confirm() {
         $fid = $_REQUEST['fid'];
         $f = $_REQUEST['f'];

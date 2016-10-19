@@ -1,0 +1,368 @@
+<?php
+
+$date = date("Y-m-d");
+$group_id = $this->session->userdata('group_id');
+
+?>
+
+<div id="page-wrapper" class="gray-bg dashbard-1">
+    <div class="content-main">
+        <?php $this->load->view('admin/layout/breadcrumb') ?>
+        <?php if($group_id == 1){?>                            <!--dashboard for admin-->
+        <div class="content-top clearfix">
+            <div class="banner">
+                <?php if (isset($subjects)) { ?>
+                    <h5><?php echo $subjects[0]->sub_name; ?></h5>
+                <?php } ?>
+            </div>
+            <div class=" col-lg-12">
+                <?php for ($i = 0; $i < count($topic[0]); $i++) { ?>
+                    <div class="col-md-3 content-top-1 mg" >
+                        <h5 class="text-item17"><?php echo $topic[0][$i]->topic_name; ?></h5>
+                        <h6>No of Questions </h6>
+                        <div class="col-md-4 top-content">                            
+                            <label><?php echo $queCount[$i][0]->total;?></label>
+                        </div>
+                        <div class="col-md-8 top-content1 text-right" style="padding:10px;">	   
+                            <h6>Key Concepts </h6>
+                            <?php if(!empty($keyConcept[$i])){?> 
+                                <label style="color: green;">Y </label>
+                            <?php }else {?>
+                                <label style="color: red;">N </label>
+                            <?php }?>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                <?php } ?> 
+            </div> 
+        </div>
+        
+        <div class="content-top clearfix">
+            <div class="banner">
+                <?php if (isset($subjects)) { ?>
+                    <h5><?php echo $subjects[1]->sub_name; ?></h5>
+                <?php } ?>
+            </div>
+            <div class=" col-lg-12">
+                <?php for ($i = 0; $i < count($topic[1]); $i++) { ?>
+                    <div class="col-md-3 content-top-1 mg" >
+                        <h5 class="text-item17"><?php echo $topic[1][$i]->topic_name; ?></h5>
+                        <h6>No of Questions </h6>
+                        <div class="col-md-4 top-content">                            
+                            <label><?php echo $queCount[$i][0]->total;?></label>
+                        </div>
+                        <div class="col-md-8 top-content1 text-right" style="padding:10px;">	   
+                            <h6>Key Concepts </h6>
+                            <?php if(!empty($keyConcept[$i])){?> 
+                                <label style="color: green;">Y </label>
+                            <?php }else {?>
+                                <label style="color: red;">N </label>
+                            <?php }?>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                <?php } ?> 
+            </div> 
+        </div>
+        
+        <div class="content-top clearfix">
+            <div class="banner">
+                <?php if (isset($subjects)) { ?>
+                    <h5><?php echo $subjects[2]->sub_name; ?></h5>
+                <?php } ?>
+            </div>
+            <div class=" col-lg-12">
+                <?php for ($i = 0; $i < count($topic[2]); $i++) { ?>
+                    <div class="col-md-3 content-top-1 mg" >
+                        <h5 class="text-item17"><?php echo $topic[2][$i]->topic_name; ?></h5>
+                        <h6>No of Questions </h6>
+                        <div class="col-md-4 top-content">                            
+                            <label><?php echo $queCount[$i][0]->total;?></label>
+                        </div>
+                        <div class="col-md-8 top-content1 text-right" style="padding:10px;">	   
+                            <h6>Key Concepts </h6>
+                            <?php if(!empty($keyConcept[$i])){?> 
+                                <label style="color: green;">Y </label>
+                            <?php }else {?>
+                                <label style="color: red;">N </label>
+                            <?php }?>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                <?php } ?> 
+            </div> 
+        </div>
+        
+        <div class="content-top clearfix">
+            <div class="banner">
+                <?php if (isset($subjects)) { ?>
+                    <h5><?php echo $subjects[3]->sub_name; ?></h5>
+                <?php } ?>
+            </div>
+            <div class=" col-lg-12">
+                <?php for ($i = 0; $i < count($topic[3]); $i++) { ?>
+                    <div class="col-md-3 content-top-1 mg" >
+                        <h5 class="text-item17"><?php echo $topic[3][$i]->topic_name; ?></h5>
+                        <h6>No of Questions </h6>
+                        <div class="col-md-4 top-content">                            
+                            <label><?php echo $queCount[$i][0]->total;?></label>
+                        </div>
+                        <div class="col-md-8 top-content1 text-right" style="padding:10px;">	   
+                            <h6>Key Concepts </h6>
+                            <?php if(!empty($keyConcept[$i])){?> 
+                                <label style="color: green;">Y </label>
+                            <?php }else {?>
+                                <label style="color: red;">N </label>
+                            <?php }?>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                <?php } ?> 
+            </div> 
+        </div>
+        
+        <!--graph-->
+    <div class="content-top clearfix">
+        <input type ="hidden" id="prev_date" value="">
+        <div class="graph">
+            <div class="graph-grid">
+                <div class="col-md-6 graph-1">
+                    <div class="grid-1">
+                        <h5>User SignUp(Week)</h5>
+                        <span id="show_week"><?php echo $date; ?></span>
+                        <canvas id="bar1" height="300" width="500" style="width: 500px; height: 300px;"></canvas>
+                        <script>
+                                var barChartData = {
+                                        labels : <?= $res_weekData ?>,
+                                        datasets : [
+                                                {
+                                                        fillColor : "#FBB03B",
+                                                        strokeColor : "#FBB03B",
+                                                        data : <?= $res_weekcountData ?>
+                                                }
+                                        ]
+
+                                };
+                                        new Chart(document.getElementById("bar1").getContext("2d")).Bar(barChartData);
+                        </script>
+                    </div>
+                </div>
+                <div class="col-md-6 graph-2">
+                    <div class="grid-1">
+                        <h5>User SignUp(Year) <span ><a href="javascript:prev_year();">Prev</a></span><span id="nxt_link"><a href="javascript:next_year();">Next</a></span>
+                            
+                        </h5>
+                        <span id="show_year"></span>
+                      
+                        <canvas id="line1" height="300" width="500" style="width: 500px; height: 300px;"></canvas>
+                        <script>
+                            var lineChartData = {
+                                    labels : <?= $res_monthData ?>,
+                                    datasets : [
+                                            {
+                                                    fillColor : "#fff",
+                                                    strokeColor : "#1ABC9C",
+                                                    pointColor : "#1ABC9C",
+                                                    pointStrokeColor : "#1ABC9C",
+                                                    data : <?= $res_countData ?>
+                                            }
+                                    ]
+
+                            };
+                            new Chart(document.getElementById("line1").getContext("2d")).Line(lineChartData);
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+     <!--graph-->
+    <div class="content-top clearfix">
+        <div class="graph">
+            <div class="graph-grid">
+                <div class="col-md-6 graph-1">
+                    <div class="grid-1">
+                        <h5>User SignUp(Current Date)</h5>
+                        <canvas id="bar" height="300" width="500" style="width: 500px; height: 300px;"></canvas>
+                        <script>
+                                var barChartData = {
+                                        labels : <?= $res_dayData ?>,
+                                        datasets : [
+                                                {
+                                                        fillColor : "#FBB03B",
+                                                        strokeColor : "#FBB03B",
+                                                        data : <?= $res_daycountData ?>
+                                                }
+                                        ]
+
+                                };
+                                        new Chart(document.getElementById("bar").getContext("2d")).Bar(barChartData);
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <?php }else{ ?>                                              <!--for recruiter dashboard-->
+            <div class="content-top clearfix">
+                <div class="col-md-3">
+                    
+                    <div class="content-top-1">
+                        <div class="col-md-8 top-content">
+                                <h5>Jobs Posted</h5>
+                                <?php if(isset($job)){ ?>
+                                    <label><?php  echo $job ;?></label>
+                                <?php } else{ ?>
+                                    <label>0</label>
+                                <?php } ?>
+                        </div>
+                        <div class="col-md-4 top-content1">	   
+                               
+                        </div>
+                         <div class="clearfix"> </div>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="content-top clearfix">
+                <div class="col-md-6">
+                    <div class="content-top-1">
+                        <div class="table-responsive"> 
+                            <div class="panel panel-default">
+                                <div class="panel-heading" style="border-radius: 0px;padding: 0px">
+                                    <h3 class="panel-title pull-left" style="padding: 8px">Jobs Posted <small></small></h3>
+                                    <span class="pull-right btn-group">
+                                        <a href="<?php print base_url(); ?>admin/Job/job-add"><button type="button"  title="Add New Job" class="btn btn-success"><i class="fa fa-plus-circle"></i> New Job</button></a>
+                                    </span>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="panel-body">
+                                    <table id="getData" class="dataTable table table-bordered table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-xs-2">Job Title</th>
+                                                <th class="col-xs-2">Job Location</th>
+                                                <th class="col-xs-2">Expected DOJ</th>
+                                                <th class="col-xs-2">Created Date</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if(!empty($job_details) && isset($job_details)){?>
+                                                <?php for($i=0;$i<count($job_details);$i++){ ?>
+                                                <tr>
+                                                    <td><?php echo  $job_details[$i]->title?></td>
+                                                    <td><?php echo  $job_details[$i]->location?></td>
+                                                    <td><?php echo  $job_details[$i]->expected_doj?></td>
+                                                    <td><?php echo  $job_details[$i]->create_date?></td>
+                                                </tr>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+        <?php $this->load->view('admin/layout/footer'); ?>
+    </div>
+   
+    <div class="clearfix"></div>
+</div>
+<script>
+    $("document").ready(function(){
+        $("#nxt_link").css("display","none");
+        var date = new Date();
+        var yr = date.getFullYear();
+        $("#prev_date").val(yr);
+        $("#show_year").html(yr);
+    });
+    function prev_year(){
+       
+        //prev.setDate(current_date.getDate() - 1);
+        $("#nxt_link").css("display","block");
+        var c_yr =$("#prev_date").val();
+        var prev = c_yr - 1;
+        $("#prev_date").val(prev);
+        $("#show_year").html(prev);
+        $.ajax({
+            url: "<?php $siteurl?>Admin_controller/getPrevGraph",
+            type: 'POST',
+            dataType: "json",
+            data: {
+              sel_yr:prev
+            },
+            success: function(data) {
+                if(data.res_monthData != 'null' && data.res_countData !='null'){
+                    var lineChartData = {
+                              labels : data.res_monthData,
+                              datasets : [
+                                      {
+                                              fillColor : "#fff",
+                                              strokeColor : "#1ABC9C",
+                                              pointColor : "#1ABC9C",
+                                              pointStrokeColor : "#1ABC9C",
+                                              data :data.res_countData
+                                      }
+                              ]
+
+                      };
+                      new Chart(document.getElementById("line1").getContext("2d")).Line(lineChartData);
+                }else{
+
+                }
+            },
+            error: function(data) {
+               alert("Error");
+            }
+            
+         });
+    }
+    
+    
+     function next_year(){
+       
+        //prev.setDate(current_date.getDate() - 1);
+        var c_yr =$("#prev_date").val();
+        var prev = parseInt(c_yr) + 1;
+        $("#prev_date").val(prev);
+        $("#show_year").html(prev);
+        $.ajax({
+            url: "<?php $siteurl?>Admin_controller/getPrevGraph",
+            type: 'POST',
+            dataType: "json",
+            data: {
+              sel_yr:prev
+            },
+            success: function(data) {
+                if(data.res_monthData != 'null' && data.res_countData !='null'){
+                  var lineChartData = {
+                            labels : data.res_monthData,
+                            datasets : [
+                                    {
+                                            fillColor : "#fff",
+                                            strokeColor : "#1ABC9C",
+                                            pointColor : "#1ABC9C",
+                                            pointStrokeColor : "#1ABC9C",
+                                            data :data.res_countData
+                                    }
+                            ]
+
+                    };
+                    new Chart(document.getElementById("line1").getContext("2d")).Line(lineChartData);
+                }else{
+
+                }
+            },
+            error: function(data) {
+               alert("Error");
+            }
+            
+         });
+    }
+    
+</script>

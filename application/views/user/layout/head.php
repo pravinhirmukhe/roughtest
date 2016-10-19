@@ -24,6 +24,7 @@
     <!--<link rel="stylesheet" href="<?= ANGULARURL ?>introjs/agency.css">-->
     <link rel="stylesheet" href="<?= ANGULARURL ?>introjs/introjs.css">
     <link href="<?= ANGULARURL ?>introjs/themes/introjs-nazanin.css" rel="stylesheet">
+    <link href="<?= ANGULARURL ?>fullcalendar.min.css" rel="stylesheet">
     <!--<script src="<?= ASSETSURL ?>js/jquery.js"></script>-->
     <!--<script src="<?= ASSETSURL ?>js/bootstrap.js"></script>-->
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->

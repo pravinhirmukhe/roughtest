@@ -25,25 +25,31 @@
                     <td>{{$index + 1}}</td>
                     <td>{{to.task}}</td>
                     <td>{{to.name}}</td> 
-                    <td><a href=# onclick='setKc()'> Key-Concepts</a></td>
+                    <td><a href="#/keyconcept/{{to.sid}}/{{to.id}}"> Key-Concepts</a></td>
                 </tr>
                 <tr ng-if="todo.data.dates.today == to.date" style='text-align: center;' >
                     <td>{{$index + 1}}</td>
                     <td>{{to.task}}</td>
                     <td>{{to.name}}</td>
-                    <td><a href=# onclick='setKc()'> Exercise 1</a></td>
+                    <td><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 1)"> Exercise 1</a></td>
                 </tr>
                 <tr ng-if="todo.data.dates.one_day_before == to.date" style='text-align: center;' >
                     <td>{{$index + 1}}</td>
                     <td>{{to.task}}</td>
                     <td>{{to.name}}</td>
-                    <td ><a href=# onclick='setKc()'> Exercise 2</a></td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 2)"> Exercise 2</a></td>
                 </tr>
                 <tr ng-if="todo.data.dates.two_days_before == to.date" style='text-align: center;' >
                     <td>{{$index + 1}}</td>
                     <td>{{to.task}}</td>
                     <td>{{to.name}}</td>
-                    <td ><a href=# onclick='setKc()'> Exercise 3</a></td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="setInstructions(to.sid, to.id, 3)"> Exercise 3</a></td>
+                </tr>
+                <tr ng-if="to.date | in_array:todo.data.testdays" style='text-align: center;' >
+                    <td>{{$index + 1}}</td>
+                    <td>{{to.task}}</td>
+                    <td>{{to.name}}</td>
+                    <td ><a href="" data-toggle="modal" data-target=".exam_inst" ng-click="instructionsDppTpp('DPP', to.sid)"> Subject Test</a></td>
                 </tr>
             </tbody>
         </table>

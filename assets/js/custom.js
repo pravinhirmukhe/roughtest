@@ -138,7 +138,7 @@ function setInstructions(subid, topicid, ex_type) {
     });
 }
 function setSub(subid, topicid, ex_type) {
-    $("#feeds_center").html("<img src='assets/images/hex-loader2.gif' />");
+//    $("#feeds_center").html("<img src='assets/images/hex-loader2.gif' />");
     $.ajax({
         type: "POST",
         url: site_url + "Study_controller/getExam",

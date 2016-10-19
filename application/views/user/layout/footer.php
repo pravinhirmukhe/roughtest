@@ -116,3 +116,6 @@
 <!--<script src="<?= ASSETSURL ?>js/prettify.js" type="text/javascript"></script>-->
 <script src="<?= ASSETSURL ?>js/custom.js" type="text/javascript"></script>
 <script src="<?= ANGULARURL ?>node_modules/cropper/dist/cropper.js"></script>
+<script src="<?= ANGULARURL ?>moment.min.js"></script>
+<script src="<?= ANGULARURL ?>fullcalendar.min.js"></script>
+<script src="<?= ANGULARURL ?>scheduler.min.js"></script>

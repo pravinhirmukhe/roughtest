@@ -11,8 +11,6 @@ if (!alertify.errorAlert) {
         };
     }, true, 'alert');
 }
-
-
 app = angular.module('rough', ['ngRoute', 'ngSanitize']);
 app.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -61,12 +59,58 @@ app.run(function ($rootScope, Data, facebookService) {
     Data.GetSideviewd().success(function (d) {
         $('#sidemenu').html(d);
     });
+    $rootScope.addFbFriend = function (di, ids) {
+        Data.GetAddFBfriend($.param({id: di, ids: ids, uid: $rootScope.uid})).success(function (d) {
+            if (d.s == "1") {
+                alertify.success(d.msg);
+            } else if (d.s == "0") {
+                alertify.errorAlert(d.msg);
+            } else {
+                alertify.error(d.msg);
+            }
+        });
+    };
 //    $rootScope.setSub = function (subid, topicid, ex_type) {
 //        Data.GetExam($.param({subid: subid, topicid: topicid, ex_type: ex_type})).success(function (d) {
 //            $('#exambody').html(d);
 //            $('#examwizard').modal('show');
 //        });
 //    }
+    $rootScope.getfbinvfr = function () {
+
+        facebookService.getFBFriends().then(function (response) {
+            var friend_data = response.data;
+            var $res = [];
+            var $fbids = [];
+            for (var i = 0; i < friend_data.length; i++) {
+                $res.push({
+                    id: friend_data[i].id,
+                    img: "https://graph.facebook.com/" + friend_data[i].id + "/picture",
+                    name: friend_data[i].name, profile: "https://www.facebook.com/app_scoped_user_id/" + friend_data[i].id
+                });
+                $fbids.push(friend_data[i].id);
+            }
+            $rootScope.fb_friends = $res;
+            $rootScope.fbids = $fbids;
+        });
+
+    }
+    $rootScope.getfbinvte = function () {
+        facebookService.getFBinvites($rootScope.invite).then(function (response) {
+
+            var friend_data = response.data;
+//            alert(JSON.stringify(response));
+//            var $res = [];
+//            for (var i = 0; i < friend_data.length; i++) {
+//                $res.push({
+//                    id: friend_data[i].id,
+//                    img: friend_data[i].picture.data.url,
+//                    name: friend_data[i].name
+//                });
+//            }
+//            $rootScope.fbfrfriends = $res;
+        });
+    }
     $rootScope.mconfirmed = function (di) {
         Data.GetMConfirmed($.param({fid: di, f: "frsh"})).success(function (d) {
 //            $scope.fs = d;
@@ -161,7 +205,6 @@ app.run(function ($rootScope, Data, facebookService) {
         repass: "",
         location: "",
         locations: "",
-        currently: "",
         institute: "",
         institutes: "",
         branch: "",
@@ -565,6 +608,7 @@ app.controller('schedulemodal', ['$scope', '$rootScope', '$http', 'Data', functi
         });
     }]);
 app.controller('homepage', ['$scope', '$rootScope', '$http', 'Data', function ($scope, $rootScope, $http, Data) {
+        $scope.i = 1;
         Data.GetQuote().success(function (d) {
             $scope.quote = d;
         });
@@ -589,6 +633,7 @@ app.controller('studymaterial', ['$scope', '$rootScope', '$http', 'Data', functi
         });
     }]);
 app.controller('keyconcepts', ['$scope', '$rootScope', '$http', 'Data', '$routeParams', function ($scope, $rootScope, $http, Data, $routeParams) {
+        $scope.kcs = true;
         Data.GetKeyConcepts($.param({subid: $routeParams.sid, topicid: $routeParams.tid})).success(function (d) {
             if (d.s == "1") {
                 $scope.kc = d;
@@ -600,19 +645,67 @@ app.controller('keyconcepts', ['$scope', '$rootScope', '$http', 'Data', '$routeP
         Data.GetSideviewd().success(function (d) {
             $('#sidemenu').html(d);
         });
+        $scope.completeKc = function (subid, topicid, ex_type)
+        {
+            Data.GetCompleteKc($.param({
+                "subid": subid,
+                "topicid": topicid,
+                "ex_type": ex_type
+            })).success(function (d) {
+                $scope.kcs = false;
+                $('#feeds_center').html();
+                $('#exam_center').html(d);
+            });
+        }
     }]);
 app.controller('plannerController', ['$scope', '$rootScope', '$http', 'Data', function ($scope, $rootScope, $http, Data) {
+        $scope.sche = {schdate: "", sub_id: "", tid: ""};
         Data.GetSideviewd().success(function (d) {
             $('#sidemenu').html(d);
         });
+        $('.datepicker').on('changeDate', function (ev) {
+            $(this).datepicker('hide');
+            $scope.sche.schdate = $('#schdate').val();
+        });
+        $('.dropdown-toggle').dropdown();
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
         $scope.cal = "";
         $cal = {y: ($rootScope.date.getYear() + 1900), m: ($rootScope.date.getMonth() + 1)}
+        $scope.curmonth = $cal.y + "-" + $cal.m;
         localStorage.setItem('date', JSON.stringify($cal));
-        Data.GetCal($.param($cal)).success(function (d) {
-            $scope.cal = d;
-        });
+        $scope.getCal = function () {
+            Data.GetCal().success(function (d) {
+                $dt = [];
+                $.each(d, function (k, v) {
+                    x = v.start.split(',');
+                    $dt.push({'id': v.id, 'title': v.title, start: new Date(x[0], x[1] - 1, x[2]), url: v.url, resourceId: v.rid});
+                });
+                $('#calendar').fullCalendar({
+                    defaultView: 'month',
+                    editable: true,
+                    selectable: true,
+                    eventLimit: true, // allow "more" link when too many events
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    resources: [
+                        {id: 'a'},
+                        {id: 'b', eventColor: 'green'},
+                        {id: 'c', eventColor: 'orange'},
+                        {id: 'd', eventColor: 'red'}
+                    ],
+                    events: $dt
+                });
+            });
+        }
         $scope.previous = function () {
             $cal = JSON.parse(localStorage.getItem('date'));
+            $scope.curmonth = $cal.y + "-" + $cal.m;
             if ($cal.m == 1) {
                 $cal.m = 12;
                 $cal.y = ($cal.y - 1);
@@ -626,6 +719,7 @@ app.controller('plannerController', ['$scope', '$rootScope', '$http', 'Data', fu
         }
         $scope.next = function () {
             $cal = JSON.parse(localStorage.getItem('date'));
+            $scope.curmonth = $cal.y + "-" + $cal.m;
             if ($cal.m == 12) {
                 $cal.m = 1;
                 $cal.y = ($cal.y + 1);
@@ -637,10 +731,25 @@ app.controller('plannerController', ['$scope', '$rootScope', '$http', 'Data', fu
                 $scope.cal = d;
             });
         }
+        $scope.save = function () {
+            Data.GetSchedule($.param($scope.sche)).success(function (d) {
+                if (d.s == "1") {
+                    $(".scheduler_model").modal('hide');
+                    $scope.cal = "";
+                    $cal = {y: ($rootScope.date.getYear() + 1900), m: ($rootScope.date.getMonth() + 1)}
+                    $scope.curmonth = $cal.y + "-" + $cal.m;
+                    localStorage.setItem('date', JSON.stringify($cal));
+                    $scope.getCal();
+                    alertify.success(d.msg);
+                } else {
+                    alertify.errorAlert(d.msg);
+                }
+            });
+        }
 
     }]);
 app.controller('register', ['$scope', '$rootScope', '$http', 'Data', function ($scope, $rootScope, $http, Data) {
-        $scope.flag = false;
+        $scope.flag = true;
         $scope.flage = true;
         $scope.flagi = true;
         $scope.flagp = true;
@@ -672,11 +781,12 @@ app.controller('register', ['$scope', '$rootScope', '$http', 'Data', function ($
                 "image": site_url + "assets/images/" + pay.image,
                 "handler": function (response) {
                     $rootScope.reg.payment_id = response.razorpay_payment_id;
-                    $('#register').submit();
+//                    $('#register').submit();
                 },
                 "prefill": {
                     "name": $rootScope.reg.f_name + " " + $rootScope.reg.l_name,
-                    "email": $rootScope.reg.regemail
+                    "email": $rootScope.reg.regemail,
+                    "contact": "7507546002"
                 },
                 "notes": {
                     "address": ""
@@ -719,6 +829,7 @@ app.controller('register', ['$scope', '$rootScope', '$http', 'Data', function ($
                     if (d.s == '1') {
                         $scope.flage = ErrorDisplay('regemail', {status: 2, msg: 'Email Already Exist', d: true});
                     } else {
+                        $scope.flage = ErrorDisplay('regemail', {status: 1, msg: '', d: false});
                         if ($rootScope.reg.i_code_present == "yes" && $rootScope.reg.i_code != "") {
                             Data.CheckICode($.param({i_code: $rootScope.reg.i_code})).success(function (d) {
                                 if (d.s == '0') {
@@ -743,6 +854,14 @@ app.controller('register', ['$scope', '$rootScope', '$http', 'Data', function ($
                                     $('#loader').html("");
                                     if (d.s == '1') {
                                         $('#reg_info').html('<center><h4>User Registration Successful.<br>Verify yourself by clicking on the link sent to your mail box.</h4></center>');
+                                        $rootScope.rsfbfr = d.fr;
+                                        $rootScope.uid = d.uid;
+                                        $rootScope.invite = d.invite;
+                                        setTimeout(function () {
+                                            $('#reg_info').modal('hide');
+                                            $rootScope.getfbinvfr();
+                                            $('#invitefbfr').modal('show');
+                                        }, 1000);
                                     } else if (d.s == '2') {
                                         $('#reg_info').html('<center><h4>User Registration Successful.<br>But did not sent mail. please contact to roughsheet support team!</h4></center>');
                                     }
