@@ -88,6 +88,29 @@
         textInput = textInput.replace(/[^A-Za-z ]/g, "");
         document.getElementById("cname").value = textInput;
     }
+    $(document).ready(function(){
+        get_all_rank();
+    });
+    function get_all_rank(){
+        var domain ="global";
+        var type = "cumulative";
+        
+            $.ajax({
+                type : 'POST',
+                url : '<?= site_url() ?>admin/Rank/show-All-Rank',
+                data : {domain:domain,
+                type:type},
+                success: function(response){
+                   // alert(response);
+                     $("#rankData").css("display","block");
+                     $('#getData1 tbody').empty();
+                     $('#getData1 tbody').append(response);
+                }
+            });
+
+        }
+
+    
     function sub(){
         var subid = $('select[name=subid').val();
         var domain = $('select[name=domain').val();

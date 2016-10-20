@@ -60,7 +60,7 @@
                                     <div class="form-group col-md-6">
                                         <div class="form-group">
                                             <label>Phone</label>
-                                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="Phone" maxlength="10" oninput="validateNumber(this);"/>
+                                            <input type="text" name="phone" id="phone" class="form-control" value="<?php echo set_value('phone'); ?>" placeholder="Phone" oninput="validateNumber(this);"/>
                                             <span class="help-block"><?php echo form_error('phone'); ?></span>
                                         </div>
                                     </div>

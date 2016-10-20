@@ -271,6 +271,7 @@ class Site {
         $type = $type . '_marks';
         $q = $this->db->select($type)->order_by('id', 'desc')->limit(1)->get('rs_weekly_marks');
         $d = (array) $q->row();
+       
         return json_decode($d["$type"]);
     }
 

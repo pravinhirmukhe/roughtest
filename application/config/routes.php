@@ -113,6 +113,8 @@ $route['admin/Qtype-edit/(:any)'] = "admin/System_user_controller/questionType_e
 $route['admin/Qtype-update/(:any)'] = "admin/System_user_controller/questionType_update/$1";
 $route['admin/Rank/studentRank'] = "admin/Rank_controller/rank";
 $route['admin/Rank/show-Rank'] = "admin/Rank_controller/show_rank";
+$route['admin/Rank/show-All-Rank'] = "admin/Rank_controller/show_all_rank";
+
 $route['admin/Rank/show-profile/(:any)'] = "admin/Rank_controller/show_user_profile/$1";
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

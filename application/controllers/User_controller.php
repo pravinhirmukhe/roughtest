@@ -225,6 +225,7 @@ class User_controller extends MY_Controller {
 
     public function signup() {
         $rs = $this->user->signup();
+        
         if ($rs['s']) {
             $d = $rs['data'];
             $d['enc_random'] = $this->site->str_encrypt_n_decrypt($d['enc_random'], "enc");
