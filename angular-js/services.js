@@ -10,7 +10,7 @@ fbinit = function () {
         status: true,
         cookie: true,
         xfbml: true,
-        version: 'v2.7'
+        version: 'v2.8'
     });
 }
 //};
@@ -66,67 +66,91 @@ app.factory('myInterceptor',
             };
             return interceptor;
         });
-app.factory('facebookService', function ($q) {
-    return {
-        getLogin: function () {
-            fbinit();
-            var deferred = $q.defer();
-            FB.login(function (response) {
-                if (response.authResponse) {
-                    FB.api('/me', {fields: 'id,first_name,last_name,email,gender,link'}, function (response) {
-                        if (!response || response.error) {
-                            deferred.reject('Error occured');
-                        } else {
-                            deferred.resolve(response);
-                        }
-                    });
-                }
-            }, {scope: 'email,user_friends'});
-            return deferred.promise;
-        },
-        getFBFriends: function () {
-            fbinit();
-            var deferred = $q.defer();
-            FB.api('/me/friends', function (response) {
-                if (!response || response.error) {
-                    deferred.reject('Error occured');
-                } else {
-                    deferred.resolve(response);
-                }
-            });
-            return deferred.promise;
-        },
-        getFBinviFriends: function () {
-            fbinit();
-            var deferred = $q.defer();
-            FB.api('/me/taggable_friends', {limits: 10}, function (response) {
-                if (!response || response.error) {
-                    deferred.reject('Error occured');
-                } else {
-                    deferred.resolve(response);
-                }
-            });
-            return deferred.promise;
-        },
-        getFBinvites: function ($data) {
-            fbinit();
-            FB.ui({method: 'feed', // <-- PROBLEM
-                link: $data.link,
-                picture: $data.img,
-                name: $data.name,
-                caption: $data.caption,
-                description: $data.msg
+app.factory('facebookService', ['$rootScope', '$http', '$q', function facebookService($rootScope, $http, $q) {
+        return {
+            getLogin: function () {
+                fbinit();
+                var deferred = $q.defer();
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        FB.api('/me', {fields: 'id,first_name,last_name,email,gender,link'}, function (response) {
+                            if (!response || response.error) {
+                                deferred.reject('Error occured');
+                            } else {
+                                deferred.resolve(response);
+                            }
+                        });
+                    }
+                }, {scope: 'email,user_friends'});
+                return deferred.promise;
             },
-            function (response) {
-                if (response.error_code) {
-                    alertify.errorAlert("<b style='color:red'>"+response.error_message+"</b>");
-                } else {
-                    alertify.alert('Success', "Post Successfully!");
-                }
-            });
+            getFBFriends: function () {
+                fbinit();
+                var deferred = $q.defer();
+                FB.api('/me/friends', function (response) {
+                    if (!response || response.error) {
+                        deferred.reject('Error occured');
+                    } else {
+                        deferred.resolve(response);
+                    }
+                });
+                return deferred.promise;
+            },
+//            getFBinviFriends: function () {
+//                fbinit();
+//                var deferred = $q.defer();
+//                FB.api('/me/taggable_friends', {limits: 10}, function (response) {
+//                    if (!response || response.error) {
+//                        deferred.reject('Error occured');
+//                    } else {
+//                        deferred.resolve(response);
+//                    }
+//                });
+//                return deferred.promise;
+//            },
+            getFBinvites: function ($data) {
+                var deferred = $q.defer();
+                fbinit();
+                FB.ui({method: 'feed', // <-- PROBLEM
+                    link: $data.link,
+                    picture: $data.img,
+                    name: $data.name,
+                    caption: $data.caption,
+                    description: $data.msg
+                },
+                function (response) {
+                    if (response.error_code) {
+                        alertify.errorAlert("<b style='color:red'>" + response.error_message + "</b>");
+                    } else {
+                        alertify.alert('Success', "Post Successfully!");
+                    }
+
+                });
+                return deferred.promise;
+            },
+            getshareFromFocus: function ($data) {
+                var deferred = $q.defer();
+                fbinit();
+                FB.ui({method: 'feed', // <-- PROBLEM
+                    link: $data.link,
+                    picture: $data.img,
+                    name: $data.name,
+                    caption: $data.caption,
+                    description: $data.msg
+                },
+                function (response) {
+                    if (response.error_code) {
+                        alertify.errorAlert("<b style='color:red'>" + response.error_message + "</b>");
+                    } else {
+                        alertify.alert('Success', "Post Successfully!");
+                    }
+
+                });
+                return deferred.promise;
+            }
+
         }
-    }
-});
+    }]);
 app.directive('datepicker', function () {
     return {
         require: '?ngModel',
@@ -142,7 +166,6 @@ app.directive('datepicker', function () {
         }
     };
 });
-
 app.service('Data', function ($http) {
     this.Login = function ($data) {
         return $http.post(site_url + "User_controller/login", $data);
@@ -150,7 +173,6 @@ app.service('Data', function ($http) {
     this.GetPayGetWay = function ($data) {
         return $http.post(site_url + "User_controller/getPayGetWay", $data);
     };
-
     this.CheckUPass = function ($data) {
         return $http.post(site_url + "User_controller/checkpass", $data);
     };
@@ -248,6 +270,13 @@ app.service('Data', function ($http) {
     this.GetProfile = function ($data) {
         return $http.post(site_url + "Friends_controller/getProfile", $data);
     };
+    //for admin side
+    this.GetUserProfile = function ($data) {
+        return $http.post(site_url + "admin/Rank_controller/getProfile", $data);
+    };
+    this.GetTopic = function ($id) {
+        return $http.post(site_url + "admin/Admin_controller/getTopic", $id);
+    };
     this.GetSideview = function ($data) {
         return $http.post(site_url + "Friends_controller/getSideMenu", $data);
     };
@@ -260,9 +289,29 @@ app.service('Data', function ($http) {
     this.SetUpdateProf = function ($data) {
         return $http.post(site_url + "Friends_controller/setUpdateProf", $data);
     };
+    this.SetUpdateCertificate = function ($data) {
+        return $http.post(site_url + "Friends_controller/setUpdateCertificate", $data);
+    };
+    this.SetUpdateSocial_work = function ($data) {
+        return $http.post(site_url + "Friends_controller/setUpdateSocial_work", $data);
+    };
+
+    this.SetUpdateSports = function ($data) {
+        return $http.post(site_url + "Friends_controller/setUpdateSports", $data);
+    };
+    this.SetUpdateDocuments = function ($data) {
+        return $http.post(site_url + "Friends_controller/SetUpdateDocuments", $data);
+    };
+    this.SetUpdateExtra = function ($data) {
+        return $http.post(site_url + "Friends_controller/setUpdateExtra", $data);
+    };
     this.SetUpdateAcad = function ($data) {
         return $http.post(site_url + "Friends_controller/setUpdateAcad", $data);
     };
+    this.SetUpdateAchievement = function ($data) {
+        return $http.post(site_url + "Friends_controller/setUpdateAchivement", $data);
+    };
+
     this.GetFriendSearch = function ($data) {
         return $http.post(site_url + "Friends_controller/search", $data);
     };
@@ -290,6 +339,8 @@ app.service('Data', function ($http) {
     this.SetPrivacySetting = function ($data) {
         return $http.post(site_url + "Friends_controller/setPrivacySetting", $data);
     };
+
+
     /*Friends*/
 
 
@@ -301,7 +352,6 @@ app.service('Data', function ($http) {
     this.GetTPP = function ($data) {
         return $http.post(site_url + "Practice_controller/getTPP", $data);
     };
-
     /*DPPS*/
 
     /*Focus Area*/
@@ -309,7 +359,6 @@ app.service('Data', function ($http) {
     this.GetFocusArea = function ($data) {
         return $http.post(site_url + "Focus_controller/getFocusArea", $data);
     };
-
     /*Focus Area*/
     /*Performance*/
 

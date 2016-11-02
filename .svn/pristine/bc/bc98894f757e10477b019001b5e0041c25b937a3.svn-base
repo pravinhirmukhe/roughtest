@@ -1,0 +1,360 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Rank_controller
+ *
+ * 
+ */
+class Rank_controller extends MY_Controller {
+
+    //put your code here
+    public function __construct() {
+        parent::__construct();
+        $this->load->model('admin/System_user_model', 'sysuser');
+        $this->load->model('admin/Rank_model', 'Rank_model');
+        
+        //$this->load->model('site');
+        $this->load->model('Ion_auth_model', 'ion');
+        $this->load->library('form_validation');
+        $this->load->helper(array('form', 'url'));
+        $this->load->helper('message');
+        $this->load->library('session');
+    }
+    
+    public function rank(){
+        $this->data['template'] = "Rank/stud_rank";
+         $this->data['subject'] = $this->sysuser->getSubject();
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Student Rank"));
+        $this->admin_layout($this->data);
+    }
+    public function show_rank(){
+        $Xth = $_REQUEST['Xth']?$_REQUEST['Xth']:"";
+        $XIIth = $_REQUEST['XIIth']?$_REQUEST['XIIth']:"";
+        $location = $_REQUEST['location']?$_REQUEST['location']:"";
+        $diploma = $_REQUEST['diploma']?$_REQUEST['diploma']:"";
+        $degree = $_REQUEST['degree']?$_REQUEST['degree']:"";
+        
+        if ($_REQUEST['domain'] == 'global') {
+            $uid_data = $this->site->getAllUID();
+        } else {
+            $friends_data_arr = $this->site->getFriendsAndRequests();
+            $uid_data = json_decode($friends_data_arr['F_UID']);
+        }
+        $std_obj_marks = (array) $this->site->getRespectiveMarksArr($_REQUEST['type']);
+
+        $marks = array();
+        foreach ($std_obj_marks as $key1 => $val1) {
+            $marks[$key1] = (array) $val1;
+        }
+        
+        $subid = $_REQUEST['subid'];
+        $filtered_uid_arr = array();
+        $data2sort = array();
+        foreach ($marks as $temp_uid => $data) {
+            //echo $temp_uid;
+           $temp_data = null;
+            $temp_data = (array) $data;
+            foreach ($temp_data as $key => $val) {
+                if ($key == $subid) {
+                    $data2sort[$temp_uid] = $temp_data[$subid];
+                    $filtered_uid_arr[] = $temp_uid; //fileterd for the particular subject
+                }
+            }
+        }
+        
+        array_multisort($data2sort, SORT_DESC, $filtered_uid_arr);
+        $rank_limit = 10; //ranks to dispaly
+        $current_rank = 1; //rank start from 1
+        $arr_count = count($filtered_uid_arr);
+        $last_marks = -100; //just a start
+        
+        
+        //new 
+        if ($arr_count != 0) {
+            for ($i = 0; $i < $arr_count; $i++) {
+                $current_user = $filtered_uid_arr[$i];
+                $f_d_fetch1= $this->site->getUserInfo($current_user);
+                //get student name from id
+//                $userName[] = $this->sysuser->getUserNameById($filtered_uid_arr[$i]);
+                //get 10 and 12 th marks
+                $acadamicsjsonArr[] = $this->sysuser->getAcadamicsInfo($filtered_uid_arr[$i]);
+            }
+        }
+       
+        $acadamicsArr =array();
+        if(isset($acadamicsjsonArr) && !empty($acadamicsjsonArr)){
+            foreach($acadamicsjsonArr as $value){
+                $acadamicsArr[] = (array)json_decode($value[0]->academics);
+            }
+        }
+       
+        //get 10 th and 12th marks
+        $marks = array();
+        if(isset($acadamicsArr) && !empty($acadamicsArr)){
+            foreach($acadamicsArr as $key=>$value){
+
+                $marks['twelth'][] = $value[14];
+                $marks['tenth'][] = $value[19];
+                $marks['diploma'][] = $value[9];
+                $marks['degree'][] = $value[4];
+            }
+        }
+        
+        //get subject name
+        $subjectName= $this->sysuser->getSubNameById($subid);
+        
+       
+        $this->data['template'] = "Rank/rank_table";
+       // $this->data['subjectName'] = $subjectName;
+        $this->data['marks'] = $marks;
+        $this->data['filtered_uid_arr'] = $filtered_uid_arr;
+        
+        $this->data['data2sort'] = $data2sort;
+        $this->data['rank_limit'] = $rank_limit;
+        $this->data['current_rank'] = $current_rank;
+        $this->data['arr_count'] = $arr_count;
+        $this->data['last_marks'] = $last_marks;
+        $html = '';
+        $mainArr =array();
+        //filter
+        if ($arr_count != 0) {
+            for ($i = 0; $i < $arr_count; $i++) {
+                    $current_user = $filtered_uid_arr[$i];
+//                 filter for location
+                    if($Xth !=''){
+                        $range = explode('-',$Xth);
+                        if($marks['tenth'][$i]>=$range[0] && $marks['tenth'][$i]<=$range[1]){
+                             $XArr[] =$marks['tenth'][$i];
+                             $filUser[] = $filtered_uid_arr[$i];
+                        }
+                       
+                    }if($XIIth !=''){
+                        $range = explode('-',$XIIth);
+                        if($marks['twelth'][$i]>=$range[0] && $marks['twelth'][$i]<=$range[1]){
+                             $XIIArr[]=$marks['twelth'][$i];
+                             $filUser[] = $filtered_uid_arr[$i];
+                        }
+                    }if($diploma !=''){
+                        $range = explode('-',$diploma);
+                        if($marks['diploma'][$i]>=$range[0] && $marks['diploma'][$i]<=$range[1]){
+                             $diplomaArr[] =$marks['diploma'][$i];
+                             $filUser[] = $filtered_uid_arr[$i];
+                        }
+                    }if($degree !=''){
+                        $range = explode('-',$degree);
+                        if($marks['degree'][$i]>=$range[0] && $marks['degree'][$i]<=$range[1]){
+                             $degreeArr[]=$marks['degree'][$i];
+                             $filUser[] = $filtered_uid_arr[$i];
+                        }
+                    }if($location != ''){
+                        $locArr[]= $this->site->getUserInfoByCurrentCity($current_user,$location);
+                        $filUser[] = $filtered_uid_arr[$i];
+                    }
+                   
+            }
+        }    
+        $result = array_unique($filUser);
+       //for filter
+           
+           if($result != 0){
+                for($i=0;$i<count($result);$i++){
+                    $current_user = $result[$i];
+                    $f_d_fetch= $this->site->getUserInfo($current_user);
+                    //old
+                    if ($current_rank > $rank_limit) {
+                         break;
+                     } else { 
+
+                         //for the rowspan value we can check in data2sort array that how many of such marks entries are present for that subject 
+                         if ($last_marks != $data2sort[$result[$i]]) {
+                             $last_marks = $data2sort[$result[$i]];
+                                 $html ='<tr>';
+                                 $html = $html.'<td style="text-align: center;"><input name="select" class="select" value="'.$current_user.'" type="checkbox"/></td>';
+                                 $html = $html.'<td style="text-align: center;">'.$current_rank.'</td>';
+                                 $html = $html.'<td style="text-align: center;">'.$f_d_fetch['UID_FirstName']. ' </td>';
+                                 $html = $html.'<td>'.$diplomaArr[$i].'</td>';
+                                 $html = $html.'<td>'.$XArr[$i].'</td>';
+                                 $html = $html.'<td>'.$XIIArr[$i].'</td>';
+                                 $html = $html.'<td>'.anchor("admin/Rank/show-profile/$current_user", "View Profile").'</td></tr>';
+
+
+                                 $current_rank++;
+                             }else {
+
+                                 $html ='<tr>';
+                                 $html = $html.'<td style="text-align: center;"><input name="select" class="select" value="'.$current_user.'" type="checkbox"/></td>';
+                                 $html = $html.'<td style="text-align: center;">'.$current_rank.'</td>';
+                                 $html = $html.'<td style="text-align: center;">'.$f_d_fetch['UID_FirstName'] .' </td>';
+                                 $html = $html.'<td>'.$diplomaArr[$i].'</td>';
+                                 $html = $html.'<td>'.$XArr[$i].'</td>';
+                                 $html = $html.'<td>'.$XIIArr[$i].'</td>';
+                                 $html = $html.'<td>'.anchor("admin/Rank/show-profile/$current_user", "View Profile").'</td></tr>';
+
+
+                         }
+                     }
+                }
+           }else{
+               if ($arr_count != 0) {    //total user
+            for ($i = 0; $i < $arr_count; $i++) {
+                if ($current_rank > $rank_limit) {
+                    break;
+                } else { 
+                    
+                    //for the rowspan value we can check in data2sort array that how many of such marks entries are present for that subject 
+                    if ($last_marks != $data2sort[$current_user]) {
+                        $last_marks = $data2sort[$current_user];
+                            $html ='<tr>';
+                            $html = $html.'<td style="text-align: center;"><input name="select" class="select" value="'.$current_user.'" type="checkbox"/></td>';
+                            $html = $html.'<td style="text-align: center;">'.$current_rank.'</td>';
+                            $html = $html.'<td style="text-align: center;">'.$f_d_fetch1['UID_FirstName']. ' </td>';
+                            $html = $html.'<td>'.$marks['diploma'][$i].'</td>';
+                            $html = $html.'<td>'.$marks['tenth'][$i].'</td>';
+                            $html = $html.'<td>'.$marks['twelth'][$i].'</td>';
+                            $html = $html.'<td>'.anchor("admin/Rank/show-profile/$current_user", "View Profile").'</td></tr>';
+                              
+                                           
+                            $current_rank++;
+                        }else {
+
+                            $html ='<tr>';
+                            $html = $html.'<td style="text-align: center;"><input name="select" class="select" value="'.$current_user.'" type="checkbox"/></td>';
+                            $html = $html.'<td style="text-align: center;">'.$current_rank.'</td>';
+                            $html = $html.'<td style="text-align: center;">'.$f_d_fetch1['UID_FirstName'] .' </td>';
+                            $html = $html.'<td>'.$marks['diploma'][$i].'</td>';
+                            $html = $html.'<td>'.$marks['tenth'][$i].'</td>';
+                            $html = $html.'<td>'.$marks['twelth'][$i].'</td>';
+                            $html = $html.'<td>'.anchor("admin/Rank/show-profile/$current_user", "View Profile").'</td></tr>';
+
+
+                    }
+                }
+            }
+        
+    } else {
+       
+        $html = $html.'<tr><td colspan="7">Ranks not calculated yet.</td></tr>';
+       
+    }
+           }
+
+    echo $html;
+        //end
+    }
+    
+    
+    
+    public function show_user_profile($id){
+        $this->data['template'] = "Rank/user_profile";
+        //get recruiter id to check payment is done or not
+        $user_id = $this->session->userdata('user_id');
+        $paymentDetails = array();
+        $privacyUserData = array();
+        $paymentDetails = $this->Rank_model->getPaymentDetails($user_id);
+        //get privacy data of user  from rs_privacy table
+        $privacyUserData =  $this->Rank_model->getprivacyData($id);
+        $settingArr[] =  (array)json_decode($privacyUserData[0]->settings);
+        
+        if(! empty($paymentDetails)){       //recruiter has done payment
+            $this->data['userDetails'] = $settingArr[0]['private'];
+        }else{
+             $this->data['userDetails'] = $settingArr[0]['public'];
+        }
+        
+        $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "User Profile"));
+        $this->admin_layout($this->data);
+    }
+    
+    public function getProfile() {
+        
+        //$userid = $_POST['fid'];
+        $fid = $_POST['fid'] ? $_POST['fid'] : '';
+        
+        $prof = $this->db->get_where(USER_INFO, array('UID' => $fid))->row();
+        $other_info = (array) $this->db->get_where(OTHER_INFO, array('UID' => $fid))->row();
+        $prof_info = array();
+        $academics = array();
+        $prof_info = json_decode($other_info['prof_arr'], true);
+        $academics = json_decode($other_info['academics'], true);
+        if (!empty($prof_info)) {
+            foreach ($prof_info as $k => $v) {
+                $sy[$k] = $v['start_year'];
+                $sm[$k] = $v['start_month'];
+            }
+            array_multisort($sy, SORT_DESC, $sm, SORT_DESC, $prof_info);
+            error_log(print_r($prof_info, true));
+        }
+        $other_info['prof_info'] = $prof_info;
+        $other_info['academics'] = $academics;
+        $setting = $this->db->get_where(PRIVACY, array('UID' => $fid));
+        
+        $set = $setting->num_rows() ? json_decode($setting->row()->settings) : "0";
+        
+        $permission = "0";
+        //check payment done by recruiter
+        $recruiter_id = $this->session->userdata('user_id'); //logged in recruiter id
+        $payinfo =  $this->Rank_model->getPaymentDetailsByUser($recruiter_id,$fid);
+        
+            $setting = $this->db->get_where(PRIVACY, array('UID' => $_POST['fid']));
+            $per = $setting->num_rows() ? json_decode($setting->row()->settings) : "0";
+            if(!empty($payinfo)){
+                $permission = $per->private;
+            }else{
+                $permission = $per->public;
+            }
+//        if ($_POST['fid'] != $this->session->userdata('UID')) {
+//            $ids = $this->site->getFriendsAndRequests();
+//            echo "<pre>";
+//            print_r($ids);
+//            echo "</pre>";
+//            die();
+//            $setting = $this->db->get_where(PRIVACY, array('UID' => $_POST['fid']));
+//            $per = $setting->num_rows() ? json_decode($setting->row()->settings) : "0";
+//            if (in_array($_POST['fid'], json_decode($ids['F_UID']))) {
+//                $permission = $per->private;
+//            } else {
+//                $permission = $per->public;
+//            }
+//        }
+        $arr = array('s' => "1", 'prof' => $prof, 'othdata' => $other_info, 'uid' => $this->session->userdata('UID') == $fid ? $this->session->userdata('UID') : "", 'fid' => $fid, "fields" => $this->db->list_fields(USER_INFO), 'privacy' => $set, 'permission' => $permission);
+      
+        echo json_encode(array('s' => "1", 'prof' => $prof, 'othdata' => $other_info, 'uid' => $this->session->userdata('UID') == $fid ? $this->session->userdata('UID') : "", 'fid' => $fid, "fields" => $this->db->list_fields(USER_INFO), 'privacy' => $set, 'permission' => $permission));
+   
+    }
+     
+    public function shortlist(){
+        $id = $this->uri->segment(4);
+        //$this->data['subject'] = $this->sysuser->getSubject();
+        
+        $recruiter_id = $this->session->userdata('user_id');
+        $jobDetails =$this->Rank_model->getJobDetails($recruiter_id);
+        if(empty($jobDetails)){
+            $this->session->set_flashdata('message', array('title' => 'Error.', 'content' => 'Create Job First.', 'type' => 'e'));
+            redirect(site_url() . 'admin/Job/job-add');
+        }else{
+            
+            $this->data['jobDetails'] = $jobDetails;
+            //user info
+            $setting = $this->db->get_where(PRIVACY, array('UID' => $id));
+            $per = $setting->num_rows() ? json_decode($setting->row()->settings) : "0";
+           
+            $permission = $per->public;
+            $str ="UID";
+            foreach($permission as $val){
+                $str =$str .",".$val; 
+            }
+            $userDetails = $this->Rank_model->getPublicDetails($str,$id);
+            $this->data['userDetails'] = $userDetails;
+            $this->data['permission'] = $permission;
+            $this->data['template'] = "Rank/job_description";
+            $this->data['bc'] = array(array('link' => site_url('admin'), 'page' => "Home"), array('link' => '#', 'page' => "Job Description"));
+            $this->admin_layout($this->data);
+        }
+    }
+}

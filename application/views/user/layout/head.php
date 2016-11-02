@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="<?= ANGULARURL ?>introjs/introjs.css">
     <link href="<?= ANGULARURL ?>introjs/themes/introjs-nazanin.css" rel="stylesheet">
     <link href="<?= ANGULARURL ?>fullcalendar.min.css" rel="stylesheet">
+    <link href="<?= ANGULARURL ?>fa/css/font-awesome.css" rel="stylesheet">
     <!--<script src="<?= ASSETSURL ?>js/jquery.js"></script>-->
     <!--<script src="<?= ASSETSURL ?>js/bootstrap.js"></script>-->
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
@@ -53,6 +54,7 @@
         var FBID = "<?= $this->session->userdata('FBID'); ?>";</script>
     <script src="<?= ANGULARURL ?>angular.min.js" type="text/javascript"></script>
     <script src="<?= ANGULARURL ?>ui-bootstrap.js" type="text/javascript"></script>
+    <script src="<?= ANGULARURL ?>bower_components/ng-file-upload/ng-file-upload.min.js"></script>
     <script src="<?= ANGULARURL ?>angular-route.js"></script>
     <script src="<?= ANGULARURL ?>angular-animate.js"></script>
     <script src="<?= ANGULARURL ?>angular-sanitize.js"></script>
@@ -75,6 +77,5 @@
 
         ga('create', 'UA-85599746-1', 'auto');
         ga('send', 'pageview');
-
     </script>
 </head>

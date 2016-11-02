@@ -16,89 +16,111 @@ app.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
         $httpProvider.interceptors.push('myInterceptor');
     }]);
-app.run(function ($rootScope, Data, facebookService) {
-    $rootScope.subid = 0;
-    $rootScope.tid = 0;
-    $rootScope.forgetemail = "";
-    $rootScope.months = [{val: 1, name: 'Jan'}, {val: 2, name: 'Feb'}, {val: 3, name: 'Mar'}, {val: 4, name: 'Apr'}, {val: 5, name: 'May'}, {val: 6, name: 'Jun'}, {val: 7, name: 'Jul'}, {val: 8, name: 'Aug'}, {val: 9, name: 'Sep'}, {val: 10, name: 'Oct'}, {val: 11, name: 'Nov'}, {val: 12, name: 'Dec'}]
-    $rootScope.date = new Date();
-    $rootScope.FBID = FBID;
-    $rootScope.fb_friends = [];
-    $rootScope.chpuser = {flag: false, cpass: "", pass: "", repass: ""};
-    $rootScope.contact = {sub: "", msg: ""};
-    $rootScope.setKc = function (sid, tid) {
-        $rootScope.subid = sid;
-        $rootScope.tid = tid;
-    }
-    $rootScope.resendAct = function ($email) {
-        Data.ReSendActv($.param({email: $email})).success(function (d) {
-            if (d.s == '1') {
-                $('#reg_act_info').html('<center><h4>Activation Mail send Successful.<br>Verify yourself by clicking on the link sent to your mail box.</h4></center>');
-            } else if (d.s == '2') {
-                $('#reg_act_info').html('<center><h4>Activation Mail sending Failed.<br>But did not sent mail. please contact to roughsheet support team! error(' + d.msg + ')</h4></center>');
-            }
-        })
-    }
-    $rootScope.setInstructions = function (subid, topicid, ex_type) {
-        Data.SetInstr($.param({ex_type: ex_type})).success(function (d) {
-            document.getElementById('exam_inst').innerHTML = d;
-            document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' onclick='setSub(" + subid + "," + topicid + "," + ex_type + ")' class='btn btn-success'>Start Exam</a>";
+//file
+app.directive('ngFiles', ['$parse', function ($parse) {
+
+        function fn_link(scope, element, attrs) {
+            var onChange = $parse(attrs.ngFiles);
+            element.on('change', function (event) {
+                onChange(scope, {$files: event.target.files});
+            });
+        }
+        ;
+
+        return {
+            link: fn_link
+        }
+    }]);
+
+//file
+app.run(['$rootScope', 'Data', 'facebookService', function ($rootScope, Data, facebookService) {
+        $rootScope.subid = 0;
+        $rootScope.exam = 1;
+        $rootScope.tid = 0;
+        $rootScope.siteurl = site_url;
+        $rootScope.forgetemail = "";
+        $rootScope.months = [{val: 1, name: 'Jan'}, {val: 2, name: 'Feb'}, {val: 3, name: 'Mar'}, {val: 4, name: 'Apr'}, {val: 5, name: 'May'}, {val: 6, name: 'Jun'}, {val: 7, name: 'Jul'}, {val: 8, name: 'Aug'}, {val: 9, name: 'Sep'}, {val: 10, name: 'Oct'}, {val: 11, name: 'Nov'}, {val: 12, name: 'Dec'}]
+        $rootScope.date = new Date();
+        $rootScope.FBID = FBID;
+        $rootScope.fb_friends = [];
+        $rootScope.chpuser = {flag: false, cpass: "", pass: "", repass: ""};
+        $rootScope.contact = {sub: "", msg: ""};
+        $rootScope.setKc = function (sid, tid) {
+            $rootScope.subid = sid;
+            $rootScope.tid = tid;
+        }
+        $rootScope.resendAct = function ($email) {
+            Data.ReSendActv($.param({email: $email})).success(function (d) {
+                if (d.s == '1') {
+                    $('#reg_act_info').html('<center><h4>Activation Mail send Successful.<br>Verify yourself by clicking on the link sent to your mail box.</h4></center>');
+                } else if (d.s == '2') {
+                    $('#reg_act_info').html('<center><h4>Activation Mail sending Failed.<br>But did not sent mail. please contact to roughsheet support team! error(' + d.msg + ')</h4></center>');
+                }
+            })
+        }
+        $rootScope.setInstructions = function (subid, topicid, ex_type) {
+            Data.SetInstr($.param({ex_type: ex_type})).success(function (d) {
+                document.getElementById('exam_inst').innerHTML = d;
+                document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' onclick='setSub(" + subid + "," + topicid + "," + ex_type + ")' class='btn btn-success'>Start Exam</a>";
+            });
+        }
+        $rootScope.instructionsDppTpp = function (ex_type, val) {
+            Data.SetInstr($.param({ex_type: ex_type})).success(function (d) {
+                document.getElementById('exam_inst').innerHTML = d;
+                if (ex_type == 'DPP') {
+                    document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' class='btn btn-success' onclick='getdpp(" + val + ")'>Start Exam</a>";
+                }
+                else {
+                    document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' class='btn btn-success' onclick='gettpp(" + val + ")'>Start Exam</a>";
+                }
+            });
+        }
+        getExamStart = function () {
+            $('#feeds_center').css('display', 'none');
+        }
+        Data.GetSideviewd().success(function (d) {
+            $('#sidemenu').html(d);
         });
-    }
-    $rootScope.instructionsDppTpp = function (ex_type, val) {
-        Data.SetInstr($.param({ex_type: ex_type})).success(function (d) {
-            document.getElementById('exam_inst').innerHTML = d;
-            if (ex_type == 'DPP') {
-                document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' class='btn btn-success' onclick='getdpp(" + val + ")'>Start Exam</a>";
-            }
-            else {
-                document.getElementById('start_exam_btn').innerHTML = "<a href=# data-dismiss='modal' class='btn btn-success' onclick='gettpp(" + val + ")'>Start Exam</a>";
-            }
-        });
-    }
-    Data.GetSideviewd().success(function (d) {
-        $('#sidemenu').html(d);
-    });
-    $rootScope.addFbFriend = function (di, ids) {
-        Data.GetAddFBfriend($.param({id: di, ids: ids, uid: $rootScope.uid})).success(function (d) {
-            if (d.s == "1") {
-                alertify.success(d.msg);
-            } else if (d.s == "0") {
-                alertify.errorAlert(d.msg);
-            } else {
-                alertify.error(d.msg);
-            }
-        });
-    };
+        $rootScope.addFbFriend = function (di, ids) {
+            Data.GetAddFBfriend($.param({id: di, ids: ids, uid: $rootScope.uid})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success(d.msg);
+                } else if (d.s == "0") {
+                    alertify.errorAlert(d.msg);
+                } else {
+                    alertify.error(d.msg);
+                }
+            });
+        };
 //    $rootScope.setSub = function (subid, topicid, ex_type) {
 //        Data.GetExam($.param({subid: subid, topicid: topicid, ex_type: ex_type})).success(function (d) {
 //            $('#exambody').html(d);
 //            $('#examwizard').modal('show');
 //        });
 //    }
-    $rootScope.getfbinvfr = function () {
+        $rootScope.getfbinvfr = function () {
 
-        facebookService.getFBFriends().then(function (response) {
-            var friend_data = response.data;
-            var $res = [];
-            var $fbids = [];
-            for (var i = 0; i < friend_data.length; i++) {
-                $res.push({
-                    id: friend_data[i].id,
-                    img: "https://graph.facebook.com/" + friend_data[i].id + "/picture",
-                    name: friend_data[i].name, profile: "https://www.facebook.com/app_scoped_user_id/" + friend_data[i].id
-                });
-                $fbids.push(friend_data[i].id);
-            }
-            $rootScope.fb_friends = $res;
-            $rootScope.fbids = $fbids;
-        });
+            facebookService.getFBFriends().then(function (response) {
+                var friend_data = response.data;
+                var $res = [];
+                var $fbids = [];
+                for (var i = 0; i < friend_data.length; i++) {
+                    $res.push({
+                        id: friend_data[i].id,
+                        img: "https://graph.facebook.com/" + friend_data[i].id + "/picture",
+                        name: friend_data[i].name, profile: "https://www.facebook.com/app_scoped_user_id/" + friend_data[i].id
+                    });
+                    $fbids.push(friend_data[i].id);
+                }
+                $rootScope.fb_friends = $res;
+                $rootScope.fbids = $fbids;
+            });
 
-    }
-    $rootScope.getfbinvte = function () {
-        facebookService.getFBinvites($rootScope.invite).then(function (response) {
+        }
+        $rootScope.getfbinvte = function () {
+            facebookService.getFBinvites($rootScope.invite).then(function (response) {
 
-            var friend_data = response.data;
+                var friend_data = response.data;
 //            alert(JSON.stringify(response));
 //            var $res = [];
 //            for (var i = 0; i < friend_data.length; i++) {
@@ -109,164 +131,171 @@ app.run(function ($rootScope, Data, facebookService) {
 //                });
 //            }
 //            $rootScope.fbfrfriends = $res;
-        });
-    }
-    $rootScope.mconfirmed = function (di) {
-        Data.GetMConfirmed($.param({fid: di, f: "frsh"})).success(function (d) {
-//            $scope.fs = d;
-        });
-    }
-    $rootScope.mreject = function (di) {
-        Data.GetMReject($.param({uid: di, f: "frsh"})).success(function (d) {
-//            $scope.fs = d;
-        });
-    }
-    $rootScope.changepass = function () {
-        if ($rootScope.chpuser.pass == "") {
-            alertify.errorAlert("<b style='color:red'>Password field Should not be empty!</b>");
-        } else if ($rootScope.chpuser.repass == "") {
-            alertify.errorAlert("<b style='color:red'>Re-Password field Should not be empty!</b>");
-        } else if ($rootScope.chpuser.pass != $rootScope.chpuser.repass) {
-            alertify.errorAlert("<b style='color:red'>Password fields Dose not match!</b>");
-        } else {
-            Data.ChangePass($.param({pass: $rootScope.chpuser.pass})).success(function (d) {
-                if (d == "1") {
-                    $rootScope.chpuser = {flag: false, cpass: "", pass: "", repass: ""};
-                    alertify.alert('Success', "<b style='color:green'>Password changed succefully!</b>");
-                    $('.change_pass').modal('hide');
-                }
             });
         }
-    }
-    $rootScope.checkpass = function () {
-        if ($rootScope.chpuser.cpass == "") {
-            alertify.errorAlert("<b style='color:red'>Password field Should not be empty!</b>");
-        } else {
-            Data.CheckUPass($.param({cpass: $rootScope.chpuser.cpass})).success(function (d) {
-                if (d == "1") {
-                    $rootScope.chpuser.flag = true;
-                    alertify.alert('Success', "<b style='color:green'>Password is correct!</b>");
-                } else {
-                    $rootScope.chpuser.flag = false;
-                    alertify.errorAlert("<b style='color:red'>Password is incorrect!</b>");
-                }
-            });
-        }
-
-    }
-    $rootScope.contact_us = function () {
-        if ($rootScope.contact.sub == "") {
-            alertify.errorAlert("<b style='color:red'>Subject field not empty</b>");
-        } else if ($rootScope.contact.msg == "") {
-            alertify.errorAlert("<b style='color:red'>Message field not empty</b>");
-        } else {
-            Data.ContactUsTo($.param($rootScope.contact)).success(function (d) {
-                if (d.s == "1") {
-                    $rootScope.contact = {sub: "", msg: ""};
-                    alertify.alert('Success', "<b style='color:green'>Maile Send Successfully!</b>");
-                    $('.contact_form').modal('hide');
-                } else {
-                    alertify.errorAlert("<b style='color:red'>Mail Did not send! (" + d.msg + ")</b>");
-                }
-            });
-        }
-
-    }
-    $rootScope.recoverpass = function (email) {
-        if (email == "" && email.length == 0) {
-            alertify.errorAlert("Email Field Can not be empty!");
-        } else {
-            Data.CheckEmail($.param({email: email})).success(function (d) {
-                if (d.s != '1') {
-                    alertify.errorAlert("Email dose not Exist!");
-                } else {
-                    Data.ForgetPassword($.param({email: email})).success(function (d) {
-                        if (d.s == "1") {
-                            alertify.alert('Success', d.msg);
-                        } else {
-                            alertify.errorAlert(d.msg);
-                        }
-                    });
-                }
-            });
-        }
-    }
-    $rootScope.reg = {
-        fb_link: "",
-        f_name: "",
-        l_name: "",
-        gender: "",
-        dob: {y: "", m: "", d: ""},
-        i_code_present: "",
-        i_code: "",
-//        res_captcha: "",
-        regemail: "",
-        password: "",
-        repass: "",
-        location: "",
-        locations: "",
-        institute: "",
-        institutes: "",
-        branch: "",
-        branchs: "",
-        graduationyear: "",
-        payment_id: ""
-    };
-    $rootScope.fb = function () {
-        facebookService.getLogin().then(function (response) {
-            data = response;
-            Data.FbLogin($.param(data)).success(function (d) {
-                if (d.status == 1) {
-                    window.location = site_url;
-                } else if (d.status == 2) {
-                    $rootScope.reg.fb_link = data.link;
-                    $rootScope.reg.f_name = data.first_name;
-                    $rootScope.reg.l_name = data.last_name;
-                    $rootScope.reg.regemail = data.email;
-                    data.gender = data.gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
-                        return letter.toUpperCase();
-                    });
-                    $('input:radio[value=' + data.gender + ']').prop('checked', true);
-                    $('.reg_model').modal('show');
-                } else {
-                    $('#fblogin_info').html("<center><h2>Your Account not Activated. Please Activate first or contact to administration!!</h2></center>")
-                    $('.fblogin').modal('show');
-                }
-            });
-        });
-    };
-    $rootScope.getFBFriends = function () {
-        $res = [];
-        if ($rootScope.FBID.length == 0 && $rootScope.FBID == "") {
-            alertify.errorAlert('Your Account not connected to Facebook!!');
-        } else {
-            facebookService.getFBFriends().then(function (response) {
+        $rootScope.shareFromFocus = function () {
+            facebookService.getshareFromFocus($rootScope.invite).then(function (response) {
                 var friend_data = response.data;
-                var results = '';
-                for (var i = 0; i < friend_data.length; i++) {
-                    $res.push({
-                        id: friend_data[i].id,
-                        img: "https://graph.facebook.com/" + friend_data[i].id + "/picture",
-                        name: friend_data[i].name, profile: "https://www.facebook.com/app_scoped_user_id/" + friend_data[i].id
-                    });
-                }
-                $rootScope.fb_friends = $res;
+//            
             });
         }
-    }
-    $rootScope.getFBConnect = function () {
-        facebookService.getLogin().then(function () {
-            data = response;
-            Data.GetFBConnect($.param(data)).success(function (d) {
-                if (d.s == '1') {
-                    $rootScope.FBID = d.fbid;
-                } else {
-                    alertify.errorAlert('Your Account not connected to Facebook!!');
-                }
+        $rootScope.mconfirmed = function (di) {
+            Data.GetMConfirmed($.param({fid: di, f: "frsh"})).success(function (d) {
+//            $scope.fs = d;
             });
-        });
-    }
-});
+        }
+        $rootScope.mreject = function (di) {
+            Data.GetMReject($.param({uid: di, f: "frsh"})).success(function (d) {
+//            $scope.fs = d;
+            });
+        }
+        $rootScope.changepass = function () {
+            if ($rootScope.chpuser.pass == "") {
+                alertify.errorAlert("<b style='color:red'>Password field Should not be empty!</b>");
+            } else if ($rootScope.chpuser.repass == "") {
+                alertify.errorAlert("<b style='color:red'>Re-Password field Should not be empty!</b>");
+            } else if ($rootScope.chpuser.pass != $rootScope.chpuser.repass) {
+                alertify.errorAlert("<b style='color:red'>Password fields Dose not match!</b>");
+            } else {
+                Data.ChangePass($.param({pass: $rootScope.chpuser.pass})).success(function (d) {
+                    if (d == "1") {
+                        $rootScope.chpuser = {flag: false, cpass: "", pass: "", repass: ""};
+                        alertify.alert('Success', "<b style='color:green'>Password changed succefully!</b>");
+                        $('.change_pass').modal('hide');
+                    }
+                });
+            }
+        }
+        $rootScope.checkpass = function () {
+            if ($rootScope.chpuser.cpass == "") {
+                alertify.errorAlert("<b style='color:red'>Password field Should not be empty!</b>");
+            } else {
+                Data.CheckUPass($.param({cpass: $rootScope.chpuser.cpass})).success(function (d) {
+                    if (d == "1") {
+                        $rootScope.chpuser.flag = true;
+                        alertify.alert('Success', "<b style='color:green'>Password is correct!</b>");
+                    } else {
+                        $rootScope.chpuser.flag = false;
+                        alertify.errorAlert("<b style='color:red'>Password is incorrect!</b>");
+                    }
+                });
+            }
+
+        }
+        $rootScope.contact_us = function () {
+            if ($rootScope.contact.sub == "") {
+                alertify.errorAlert("<b style='color:red'>Subject field not empty</b>");
+            } else if ($rootScope.contact.msg == "") {
+                alertify.errorAlert("<b style='color:red'>Message field not empty</b>");
+            } else {
+                Data.ContactUsTo($.param($rootScope.contact)).success(function (d) {
+                    if (d.s == "1") {
+                        $rootScope.contact = {sub: "", msg: ""};
+                        alertify.alert('Success', "<b style='color:green'>Mail Send Successfully!</b>");
+                        $('.contact_form').modal('hide');
+                    } else {
+                        alertify.errorAlert("<b style='color:red'>Mail Did not send! (" + d.msg + ")</b>");
+                    }
+                });
+            }
+
+        }
+        $rootScope.recoverpass = function (email) {
+            if (email == "" && email.length == 0) {
+                alertify.errorAlert("Email Field Can not be empty!");
+            } else {
+                Data.CheckEmail($.param({email: email})).success(function (d) {
+                    if (d.s != '1') {
+                        alertify.errorAlert("Email dose not Exist!");
+                    } else {
+                        Data.ForgetPassword($.param({email: email})).success(function (d) {
+                            if (d.s == "1") {
+                                alertify.alert('Success', d.msg);
+                            } else {
+                                alertify.errorAlert(d.msg);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        $rootScope.reg = {
+            fb_link: "",
+            f_name: "",
+            l_name: "",
+            gender: "",
+            dob: {y: "", m: "", d: ""},
+            i_code_present: "",
+            i_code: "",
+//        res_captcha: "",
+            regemail: "",
+            password: "",
+            repass: "",
+            location: "",
+            locations: "",
+            institute: "",
+            institutes: "",
+            branch: "",
+            branchs: "",
+            graduationyear: "",
+            payment_id: ""
+        };
+        $rootScope.fb = function () {
+            facebookService.getLogin().then(function (response) {
+                data = response;
+                Data.FbLogin($.param(data)).success(function (d) {
+                    if (d.status == 1) {
+                        window.location = site_url;
+                    } else if (d.status == 2) {
+                        $rootScope.reg.fb_link = data.link;
+                        $rootScope.reg.f_name = data.first_name;
+                        $rootScope.reg.l_name = data.last_name;
+                        $rootScope.reg.regemail = data.email;
+                        data.gender = data.gender.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+                            return letter.toUpperCase();
+                        });
+                        $('input:radio[value=' + data.gender + ']').prop('checked', true);
+                        $('.reg_model').modal('show');
+                    } else {
+                        $('#fblogin_info').html("<center><h2>Your Account not Activated. Please Activate first or contact to administration!!</h2></center>")
+                        $('.fblogin').modal('show');
+                    }
+                });
+            });
+        };
+        $rootScope.getFBFriends = function () {
+            $res = [];
+            if ($rootScope.FBID.length == 0 && $rootScope.FBID == "") {
+                alertify.errorAlert('Your Account not connected to Facebook!!');
+            } else {
+                facebookService.getFBFriends().then(function (response) {
+                    var friend_data = response.data;
+                    var results = '';
+                    for (var i = 0; i < friend_data.length; i++) {
+                        $res.push({
+                            id: friend_data[i].id,
+                            img: "https://graph.facebook.com/" + friend_data[i].id + "/picture",
+                            name: friend_data[i].name, profile: "https://www.facebook.com/app_scoped_user_id/" + friend_data[i].id
+                        });
+                    }
+                    $rootScope.fb_friends = $res;
+                });
+            }
+        }
+        $rootScope.getFBConnect = function () {
+            facebookService.getLogin().then(function (response) {
+                data = response;
+                Data.GetFBConnect($.param(data)).success(function (d) {
+                    if (d.s == '1') {
+                        $rootScope.FBID = d.fbid;
+                        $rootScope.getFBFriends();
+                    } else {
+                        alertify.errorAlert('Your Account not connected to Facebook!!');
+                    }
+                });
+            });
+        }
+    }]);
 app.controller('examcontrol', ['$scope', '$rootScope', '$http', 'Data', '$routeParams', function ($scope, $rootScope, $http, Data, $routeParams) {
         Data.GetExam($.param({subid: $routeParams.sid, topicid: $routeParams.tid, ex_type: $routeParams.ext})).success(function (d) {
             $scope.examcontainer = d;
@@ -297,6 +326,7 @@ app.controller('galacticoscontrol', ['$scope', '$rootScope', '$http', 'Data', '$
     }]);
 app.controller('focuscontrol', ['$scope', '$rootScope', '$http', 'Data', '$routeParams', function ($scope, $rootScope, $http, Data, $routeParams) {
         Data.GetFocusArea().success(function (d) {
+            alert
             $scope.focus = d;
         });
     }]);
@@ -356,6 +386,7 @@ app.controller('dppcontrol', ['$scope', '$rootScope', '$http', 'Data', '$routePa
 app.controller('friendcontrol', ['$scope', '$rootScope', '$http', 'Data', '$routeParams', function ($scope, $rootScope, $http, Data, $routeParams) {
         Data.GetFriends().success(function (d) {
             $scope.friends = d;
+            $rootScope.invite = $scope.friends.invite;
 //            alert(JSON.stringify($scope.friends));
         });
         Data.GetSideviewd().success(function (d) {
@@ -389,15 +420,22 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
         $scope.personal = false;
         $scope.prof = false;
         $scope.acad = [false, false, false, false];
+        $scope.achive = false;
+        $scope.cer = false;
+        $scope.social = false;
+        $scope.extraca = false;
+        $scope.sports = false;
+        $scope.documents = false;
         $scope.setting = {public: [], private: []};
         $scope.permission = {};
+        $scope.user = '';
         $scope.selfields = ['Name', 'DOB', 'Gender', 'City', 'Hometown', 'Contact', 'Email', 'InstitutionOrCompany', 'Pic', 'invitation'];
         $scope.show = {
             complete: false,
             professional: false,
             acadmic: false,
-            certificates: false,
-            achievement: false,
+            cer: false,
+            achive: false,
             social: false,
             extraca: false,
             sports: false,
@@ -435,8 +473,29 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
             $('.datepicker').datepicker();
             $scope.othdata.prof_info[id].prof = true;
         }
+
         $scope.setAcad = function (id) {
             $scope.acad[id] = true;
+        }
+        $scope.setCertificate = function (id) {
+            $scope.othdata.certificates[id].cer = true;
+        }
+
+        $scope.setSocial_work = function (id) {
+            $scope.othdata.social_work[id].social = true;
+        }
+
+        $scope.setSports = function (id) {
+            $scope.othdata.sports[id].sports = true;
+        }
+        $scope.setExtra = function (id) {
+            $scope.othdata.extra[id].extraca = true;
+        }
+        $scope.setAchievement = function (id) {
+            $scope.othdata.achievements[id].achive = true;
+        }
+        $scope.setDocuments = function (id) {
+            $scope.othdata.documents[id].documents = true;
         }
         $scope.deleteProfession = function (id) {
             $('.datepicker').datepicker();
@@ -451,6 +510,127 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
                     $scope.fid = d.fid;
                     $scope.personal = false;
                     $scope.acad = [false, false, false, false];
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+        $scope.deleteCertificate = function (id) {
+            $scope.othdata.certificates[id].cer = false;
+            $scope.othdata.certificates.splice(id, 1);
+            Data.SetUpdateCertificate($.param({'cer': JSON.stringify($scope.othdata.certificates)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+        $scope.deleteSocial_work = function (id) {
+            $scope.othdata.social_work[id].social = false;
+            $scope.othdata.social_work.splice(id, 1);
+            Data.SetUpdateSocial_work($.param({'social': JSON.stringify($scope.othdata.social_work)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                    $scope.social = false;
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+        $scope.deleteSports = function (id) {
+            $scope.othdata.sports[id].sports = false;
+            $scope.othdata.sports.splice(id, 1);
+            Data.SetUpdateSports($.param({'sports': JSON.stringify($scope.othdata.sports)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.sports = false;
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+        $scope.deleteDocuments = function (id) {
+            $scope.othdata.documents[id].sports = false;
+            $scope.othdata.documents.splice(id, 1);
+            Data.SetUpdateDocuments($.param({'documents': JSON.stringify($scope.othdata.documents)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.sports = false;
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+        $scope.deleteExtra = function (id) {
+            $scope.othdata.extra[id].extraca = false;
+            $scope.othdata.extra.splice(id, 1);
+            Data.SetUpdateExtra($.param({'extraca': JSON.stringify($scope.othdata.extra)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.extraca = false;
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+        $scope.deleteAchievement = function (id) {
+            $scope.othdata.achievements[id].achive = false;
+            $scope.othdata.achievements.splice(id, 1);
+            Data.SetUpdateAchievement($.param({'achive': JSON.stringify($scope.othdata.achievements)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.achive = false;
+
                 } else {
                     alertify.error('Updateting Failed!!');
                 }
@@ -486,6 +666,115 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
                 }
             });
         }
+
+        $scope.updateCertificate = function (f) {
+            Data.SetUpdateCertificate($.param({'cer': JSON.stringify($scope.othdata.certificates)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.prof;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.acad = [false, false, false, false];
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+        $scope.updateSocial_work = function (f) {
+            Data.SetUpdateSocial_work($.param({'social': JSON.stringify($scope.othdata.social_work)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.Social;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.acad = [false, false, false, false];
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+        $scope.updateSports = function (f) {
+            Data.SetUpdateSports($.param({'sports': JSON.stringify($scope.othdata.sports)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.Social;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.acad = [false, false, false, false];
+                    $scope.sports = false;
+
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+        $scope.updateDocuments = function (f) {
+            var formData = new FormData($('#doc' + f)[0]);
+            formData.append("id", f);
+            formData.append("documents", angular.toJson($scope.othdata.documents));
+            $.ajax({
+                url: site_url + "Friends_controller/setUpdateDocuments",
+                type: 'POST',
+                data: formData,
+                async: false,
+                success: function (data) {
+                    successd(data);
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }
+        successd = function (data) {
+            d = JSON.parse(data);
+            if (d.s == "1") {
+                alertify.success('Updated Successfuly!!');
+                $scope.f = d.Social;
+                $scope.othdata = d.othdata;
+                $scope.uid = d.uid;
+                $scope.fid = d.fid;
+                $scope.personal = false;
+                $scope.cer = false;
+                $scope.social = false;
+                $scope.acad = [false, false, false, false];
+                $scope.sports = false;
+
+            } else {
+                alertify.error('Updateting Failed!!');
+            }
+        }
+        $scope.updateExtra = function (f) {
+            Data.SetUpdateExtra($.param({'extraca': JSON.stringify($scope.othdata.extra)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.Social;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.extraca = false;
+                    $scope.acad = [false, false, false, false];
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
         $scope.updateAcad = function () {
             Data.SetUpdateAcad($.param({'acad': JSON.stringify($scope.othdata.academics)})).success(function (d) {
                 if (d.s == "1") {
@@ -501,6 +790,27 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
                 }
             });
         }
+
+        $scope.updateAchievement = function () {
+            Data.SetUpdateAchievement($.param({'achive': JSON.stringify($scope.othdata.achievements)})).success(function (d) {
+                if (d.s == "1") {
+                    alertify.success('Updated Successfuly!!');
+                    $scope.f = d.Social;
+                    $scope.othdata = d.othdata;
+                    $scope.uid = d.uid;
+                    $scope.fid = d.fid;
+                    $scope.personal = false;
+                    $scope.cer = false;
+                    $scope.social = false;
+                    $scope.achive = false;
+                    $scope.acad = [false, false, false, false];
+                } else {
+                    alertify.error('Updateting Failed!!');
+                }
+            });
+        }
+
+
         $scope.setActive = function (i, d) {
             $.each($scope.show, function (k, v) {
                 $scope.show[k] = false;
@@ -536,6 +846,8 @@ app.controller('profilecontrol', ['$scope', '$rootScope', '$http', 'Data', '$rou
                 }
             });
         }
+
+
     }]);
 app.controller('userlogin', ['$scope', '$rootScope', '$http', 'Data', function ($scope, $rootScope, $http, Data) {
         $scope.user = {};
@@ -820,7 +1132,7 @@ app.controller('register', ['$scope', '$rootScope', '$http', 'Data', function ($
                         $scope.flag = ErrorDisplay('dob_d', {status: 1, msg: '', d: false});
                     }
                 }
-                if (k == "i_code") {
+                if (k == "i_code" || k == "payment_id") {
                     $scope.flag = ErrorDisplay(k, {status: 1, msg: '', d: false});
                 }
             });
@@ -900,3 +1212,4 @@ app.controller('contactus', ['$scope', '$rootScope', '$http', 'Data', function (
             }
         }
     }]);
+

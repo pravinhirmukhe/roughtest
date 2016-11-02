@@ -50,7 +50,16 @@ class Friends_controller extends MY_Controller {
                 $rss[$i]['val'] = $val;
                 $i++;
             }
-            echo json_encode(array('s' => "1", 'data' => $rss, 'imgpath' => IMGURL));
+            $inv = $this->site->getData(USER_INFO, array('UID' => $uid), 'invitation_code');
+            $invite = array(
+                'link' => SITEURL,
+                'img' => USERASSETS . "img/rs_logo_1.png",
+                'name' => "Invite in Rough sheet.",
+                'caption' => "Invitation.",
+                'caption' => "Invitation.",
+                'msg' => "Here is invitation code for free signup on roughsheet website. \"" . $inv . "\""
+            );
+            echo json_encode(array('s' => "1", 'data' => $rss, 'imgpath' => IMGURL, 'invite' => $invite));
         }
     }
 
@@ -62,8 +71,20 @@ class Friends_controller extends MY_Controller {
 //        $other_info = mysql_fetch_assoc($other_info_q);
         $prof_info = array();
         $academics = array();
+        $achievements = array();
+        $certificates = array();
+        $social_work = array();
+        $sports = array();
+        $extra = array();
+        $documents = array();
         $prof_info = json_decode($other_info['prof_arr'], true);
         $academics = json_decode($other_info['academics'], true);
+        $achievements = json_decode($other_info['achievements'], true);
+        $certificates = json_decode($other_info['certificates'], true);
+        $social_work = json_decode($other_info['social_work'], true);
+        $extra = json_decode($other_info['extra'], true);
+        $sports = json_decode($other_info['sports'], true);
+        $documents = json_decode($other_info['documents'], true);
         if (!empty($prof_info)) {
             foreach ($prof_info as $k => $v) {
                 $sy[$k] = $v['start_year'];
@@ -74,6 +95,12 @@ class Friends_controller extends MY_Controller {
         }
         $other_info['prof_info'] = $prof_info;
         $other_info['academics'] = $academics;
+        $other_info['achievements'] = $achievements;
+        $other_info['certificates'] = $certificates;
+        $other_info['social_work'] = $social_work;
+        $other_info['extra'] = $extra;
+        $other_info['sports'] = $sports;
+        $other_info['documents'] = $documents;
         $setting = $this->db->get_where(PRIVACY, array('UID' => $this->session->userdata('UID')));
         $set = $setting->num_rows() ? json_decode($setting->row()->settings) : "0";
         $permission = "0";
@@ -135,9 +162,143 @@ class Friends_controller extends MY_Controller {
         }
     }
 
+    public function setUpdateCertificate() {
+        $data = $_POST['cer'];
+        $data = json_decode($data, true);
+        $rs = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            unset($rs[$i]['cer']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('certificates' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
+    public function setUpdateSocial_work() {
+        $data = $_POST['social'];
+        $data = json_decode($data, true);
+        $rs = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            unset($rs[$i]['social']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('social_work' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
+    public function setUpdateSports() {
+        $data = $_POST['sports'];
+        $data = json_decode($data, true);
+        $rs = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            unset($rs[$i]['sports']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('sports' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
+    public function setUpdateDocuments() {
+        $dt = $this->db->select('documents')->get_where(OTHER_INFO, array('UID' => $this->session->userdata('UID')))->row()->documents;
+        $data = $_POST['documents'];
+        $data = json_decode($data, true);
+        if (!is_dir(FCPATH . "assets/userdoc/{$this->session->userdata('UID')}/")) {
+            mkdir(FCPATH . "assets/userdoc/{$this->session->userdata('UID')}/");
+        }
+        $filename = FCPATH . "assets/userdoc/{$this->session->userdata('UID')}/" . $dt[$_POST['id']]['doc'];
+        if (is_file($filename)) {
+            chmod($filename, 0777);
+            unlink($filename);
+        }
+        $config['upload_path'] = "./assets/userdoc/{$this->session->userdata('UID')}/";
+        $config['file_name'] = "doc_" . random_string("numeric", 5);
+        $config['allowed_types'] = '*';
+        $config['max_size'] = '102400';
+        $rs = array();
+        $up = array();
+        $i = 0;
+        $this->load->library('upload', $config);
+        if ($this->upload->do_upload('doc')) {
+            $up = $this->upload->data();
+//            $d = array('doc' => $up['file_name'], "path" => base_url() . "assets/userdoc/{$this->session->userdata('UID')}/");
+        }
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            if ($i == $_POST['id']) {
+                if (!empty($up)) {
+                    $rs[$i]['doc'] = $up['file_name'];
+                }
+                $rs[$i]['path'] = base_url() . "assets/userdoc/{$this->session->userdata('UID')}/";
+            }
+            unset($rs[$i]['documents']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('documents' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
+    public function setUpdateExtra() {
+        $data = $_POST['extraca'];
+        $data = json_decode($data, true);
+        $rs = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            unset($rs[$i]['extraca']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('extra' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
     public function setUpdateAcad() {
         $data = $_POST['acad'];
         if ($this->db->update(OTHER_INFO, array('academics' => $data), array('UID' => $this->session->userdata('UID')))) {
+            $this->getProfile();
+        } else {
+            echo json_encode(array('s' => "0"));
+        }
+    }
+
+    public function setUpdateAchivement() {
+
+        $data = $_POST['achive'];
+        $data = json_decode($data, true);
+        $rs = array();
+        $i = 0;
+        foreach ($data as $d) {
+            $rs[$i] = $d;
+            unset($rs[$i]['achive']);
+            unset($rs[$i]['$$hashKey']);
+            $i++;
+        }
+        if ($this->db->update(OTHER_INFO, array('achievements' => json_encode($rs)), array('UID' => $this->session->userdata('UID')))) {
             $this->getProfile();
         } else {
             echo json_encode(array('s' => "0"));
@@ -506,6 +667,102 @@ class Friends_controller extends MY_Controller {
         } else {
             echo json_encode(array('s' => "2", "msg" => "Privacy Setting Saving Failed!"));
         }
+    }
+
+    public function getAllFiles() {
+        $this->load->library('zip');
+        $data = $this->db->select('documents')->get_where(OTHER_INFO, array('UID' => $this->session->userdata('UID')))->row()->documents;
+        $data = json_decode($data);
+        foreach ($data as $d) {
+            $this->zip->read_file(FCPATH . "assets/userdoc/{$this->session->userdata('UID')}/" . $d->doc);
+        }
+        $this->zip->download('mydocs_' . strtotime(date('Y-m-d h:i:s')) . '.zip');
+    }
+
+    public function downloadCV() {
+        ob_clean();
+        ob_flush();
+        $this->load->library('PDF');
+        // create new PDF document
+        $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetTitle('Resume');
+
+// set default header data
+        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, 'Resume', PDF_HEADER_STRING);
+
+// set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// set some language-dependent strings (optional)
+//        if (@file_exists(dirname(__FILE__) . '/lang/eng.php')) {
+//            require_once(dirname(__FILE__) . '/lang/eng.php');
+//            $pdf->setLanguageArray($l);
+//        }
+// ---------------------------------------------------------
+// // set JPEG quality
+        $pdf->setJPEGQuality(75);
+// set font
+        $pdf->SetFont('freeserif', '', 10);
+
+// add a page
+        $pdf->AddPage();
+        // writeHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='')
+// writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0, $reseth=true, $align='', $autopadding=true)
+// create some HTML content
+//        $data['services'] = $this->prof_model->getProfServiceId($id);
+//        $data['content'] = $this->prof_model->getProfId($id);
+//$pdf->Image('images/image_demo.jpg', '', '', 40, 40, '', '', '', false, 300, '', false, false, 1, false, false, false);
+//        echo '<pre>';
+//        echo $this->db->last_query();
+//        print_r($data);
+//        die();
+//        . $this->load->view('emails/resume', array(), true)
+        $html = '' . $this->load->view('emails/resume', array(), true);
+
+//        $html = "<h1>Pravinkumar</h1>";
+// output the HTML content
+        $pdf->writeHTML($html, true, 0, true, 0);
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// reset pointer to the last page
+
+
+        $pdf->lastPage();
+//        $pdf->SetXY(162, 34);
+//        $pdf->Image(IMGURL . $this->session->userdata('UID_Pro_Pic'), '', '', 30, 30, '', '', 'T', false, 300, '', false, false, 0, false, false, false);
+// ---------------------------------------------------------
+//Close and output PDF document
+//        $pdf->Output(FCPATH . 'assets/pdf/RegForm_' . $id . '.pdf', 'FI');
+        $pdf->Output(FCPATH . 'assets/pdf/RegForm_.pdf', 'I');
+//        $path = FCPATH . 'assets/pdf/RegForm_' . $id . '.pdf';
+//        header("Content-Length: " . filesize($path));
+//        header("Content-type: application/pdf");
+//        header("Content-disposition: inline; filename=" . basename($path));
+//        header('Expires: 0');
+//        header('Cache-Control: must-revalidate, post-check = 0, pre-check = 0');
+//        ob_clean();
+//        flush();
+//        readfile($path);
+//============================================================+
+// END OF FILE
+//============================================================+
     }
 
 }

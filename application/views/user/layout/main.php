@@ -38,8 +38,8 @@
         <script src="animation-legacy-support.js"></script>
     <![endif]-->
         <script>var appurl = "application/views/user/ang-app";
-                    var cur_url = "<?= current_url() ?>";
-                    var FBID = "<?= $this->session->userdata('FBID'); ?>";</script>
+            var cur_url = "<?= current_url() ?>";
+            var FBID = "<?= $this->session->userdata('FBID'); ?>";</script>
         <script src="<?= ASSETSURL ?>js/ajax_func.js"></script> 
         <link href="http://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet" type="text/css">
         <link href="<?= ASSETSURL ?>css/custom.css" rel="stylesheet" type="text/css">
@@ -53,6 +53,7 @@
         <script src="<?= ANGULARURL ?>angular-sanitize.js"></script>
         <script src="<?= ANGULARURL ?>angular-sanitize.js"></script>
         <script src="<?= ANGULARURL ?>angular-animate.js"></script>
+        <script src="<?= ANGULARURL ?>bower_components/ng-file-upload/ng-file-upload.min.js"></script>
         <script type="text/javascript" src="<?= ASSETSURL ?>js/bower_components/angular-ui-select2/src/select2.js"></script>
         <link href="<?= ANGULARURL ?>app.css" rel="stylesheet" type="text/css">
         <script src="<?= ANGULARURL ?>angular.control.js" type="text/javascript"></script>
@@ -60,19 +61,34 @@
         <script src="<?= ANGULARURL ?>route.js" type="text/javascript"></script>
         <script>
 
-                    var verifyCallback = function (response) {
-                    $('#responce-captcha').val(response);
-                    };
-                    var onloadCallback = function () {
-                    grecaptcha.render('m-recaptcha', {
+            var verifyCallback = function (response) {
+                $('#responce-captcha').val(response);
+            };
+            var onloadCallback = function () {
+                grecaptcha.render('m-recaptcha', {
                     'sitekey': '6Lc0RAcUAAAAAGsDDPfoe-nnS1YoVCnPCdHHEU_t',
-                            'callback': verifyCallback,
-                            'theme': 'light'
-                    });
-                    };</script>
+                    'callback': verifyCallback,
+                    'theme': 'light'
+                });
+            };
+            $(window).load(function () { // makes sure the whole site is loaded
+                $('#status').fadeOut();
+                $('#preloader').delay(350).fadeOut('slow'); // will fade out the white DIV that covers the website.
+                $(".page-container").fadeIn("slow");
+            })
+        </script>
     </head>
     <body data-spy="scroll" data-target=".navbar-default" style="position:inherit;" ng-app="rough">
         <!-- Fixed navbar -->
+        <div id="preloader">
+            <div class="sk-spinner sk-spinner-wave">
+                <div class="sk-rect1"></div>
+                <div class="sk-rect2"></div>
+                <div class="sk-rect3"></div>
+                <div class="sk-rect4"></div>
+                <div class="sk-rect5"></div>
+            </div>
+        </div>
         <nav class="navbar navbar-default navbar-fixed-top scrollclass" style="border-bottom: 3px #37a8df solid;max-height:30px;height:30px;" >
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -93,7 +109,7 @@
                         <li><a href="#features" class="animated fadeIn">Features</a></li>
                         <li><a href="#about"  class="animated fadeIn">About Us</a></li>
                         <li><a href="#contact" class="animated fadeIn">Contact Us</a></li>
-                        <li><a href="http://www.roughsheet.com/app/blog/" class="animated fadeIn">Blog</a></li>
+                        <li><a href="<?= SITEURL ?>blog" class="animated fadeIn">Blog</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -113,9 +129,12 @@
                             <!--<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>-->
                             Learn More
                         </a> 
-
+                    </div>
+                    <div class="row col-md-12">
                         <form class="form-inline login-form " ng-submit="login()">
-                            <div class="center-block alert alert-warning error wow bounceIndown animated animated" ng-show="status">{{msg}}</div>
+
+                            <div class="alert alert-warning error wow bounceIndown animated animated" style="z-index: 9999;position: absolute;top: 30px;left: 38%" ng-show="status">{{msg}}</div>
+
                             <input type=hidden name=func_type value=login />
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 col-xs-4">Email</label>
@@ -159,8 +178,8 @@
                             </div>
                             -->
                         </form>
-
                     </div>
+
                 </div>
             </div> 
         </section>
@@ -207,7 +226,7 @@
                     </div>
                     <div class="col-sm-3 placeholder wow fadeIn" data-wow-delay="1.5s">
                         <img class='img-responsive' src="<?= ASSETSURL ?>images/how_icons/fa_1.png" >
-                        <h4>Indentify your weakness</h4>
+                        <h4>Identify your weakness</h4>
                     </div>
                     <div class="col-sm-1 placeholder wow fadeIn hidden-xs hidden-sm" data-wow-delay="1.1s">
                         <img class='img-responsive'  style="padding-top: 20px;" src="<?= ASSETSURL ?>images/how_icons/left.png" >   
@@ -527,7 +546,7 @@
                                                 <div class="col-sm-4">
                                                     <!-- <input type="text"  class="form-control datepicker" name="dob"  readonly/> -->
                                                     <select id="dob_y" name='dob_y' class='form-control  input-sm col-xs-1' style='width:73px;' ng-model="reg.dob.y">
-                                                        <option value="{{y}}" ng-repeat="y in [] | range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
+                                                        <option value="{{y}}" ng-repeat="y in []| range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
                                                     </select>
                                                     <select id="dob_m" class='form-control input-sm' style='width:90px;' name='dob_m' ng-change="getCaldays(reg.dob.y, reg.dob.m)" ng-model="reg.dob.m" >
                                                         <option value='0'>Month</option>
@@ -612,7 +631,7 @@
                                                     Graduation Year </label>
                                                 <div class="col-sm-6 col-md-3">  
                                                     <select ui-select2 ng-model="reg.graduationyear" name="graduationyear" class="form-control" id="graduationyear">
-                                                        <option value="{{y}}" ng-repeat="y in [] | range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
+                                                        <option value="{{y}}" ng-repeat="y in []| range:'<?= date('Y') ?>-<?= date('Y') - 50 ?>'">{{y}}</option>
                                                     </select>
                                                 </div><span class="label label-danger animated fadeIn" style="position: relative;top:10" id="err_location"></span>
                                             </div>
@@ -850,7 +869,7 @@
         <footer class="footer">
             <div class="footer_line">&nbsp;</div>
             <div  style='float:right;padding-right:40px;margin-top:0px;color:#333;'>
-                <a href="#" onclick="window.open('app/legal_docs/Terms_Of_Use.html');">Terms of use</a> and <a href="#" onclick="window.open('app/legal_docs/Privacy_Policy.html');">Privacy Policy</a>.</div>
+                <a href="#" onclick="window.open('<?= SITEURL ?>legal_docs/Terms_Of_Use.html');">Terms of use</a> and <a href="#" onclick="window.open('<?= SITEURL ?>legal_docs/Privacy_Policy.html');">Privacy Policy</a>.</div>
             <div  class="icon_links">
                 <a href="https://twitter.com/roughsheetinc"><img src="<?= ASSETSURL ?>images/tw.png" class='social_icons' /></a>
                 <a href="https://www.facebook.com/roughsheet"><img src="<?= ASSETSURL ?>images/fb.png" class='social_icons'/></a>
@@ -880,22 +899,22 @@
         <script type="text/javascript" src="<?= ASSETSURL ?>js/jquery.newsWidget.js"></script> 
         <!--  on click tour -->
         <script>
-                    if ($(window).width() > 999) {
-            $("#take_tour").click(function () {
-            $('#tour').crumble();
-            });
-                    $("#take_tour1").click(function () {
-            $('#tour').crumble();
-            });
+            if ($(window).width() > 999) {
+                $("#take_tour").click(function () {
+                    $('#tour').crumble();
+                });
+                $("#take_tour1").click(function () {
+                    $('#tour').crumble();
+                });
             }
         </script>
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
-        $('.datepicker').datepicker();
-                $('.datepicker').on('changeDate', function (ev) {
-        $(this).datepicker('hide');
-        });
+            $('.datepicker').datepicker();
+            $('.datepicker').on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
         })
     </script>
     <!--    <script>
@@ -916,35 +935,34 @@
     <!--
     <!-- EASING SCROLL SCRIPTS PLUGIN  -->
     <script>
-                new WOW().init();
-                wow = new WOW(
+        new WOW().init();
+        wow = new WOW(
                 {
-                boxClass: 'wow', // default
-                        animateClass: 'animated', // default
-                        offset: 0, // default
-                        mobile: true, // default
-                        live: true        // default
+                    boxClass: 'wow', // default
+                    animateClass: 'animated', // default
+                    offset: 0, // default
+                    mobile: true, // default
+                    live: true        // default
                 }
-                )
-                wow.init();</script>
+        )
+        wow.init();</script>
     <script>
-                $(function () {
-                $('.scrollclass a').bind('click', function (event) { //just pass scrollclass in design and start scrolling
+        $(function () {
+            $('.scrollclass a').bind('click', function (event) { //just pass scrollclass in design and start scrolling
                 var $anchor = $(this);
-                        $('html, body').stop().animate({
-                scrollTop: $($anchor.attr('href')).offset().top
+                $('html, body').stop().animate({scrollTop: $($anchor.attr('href')).offset().top
                 }, 1000, 'easeInOutQuad');
-                        event.preventDefault();
-                });
-                })
-                $(document).ready(function () {
-        $("body").tooltip({selector: '[data-toggle=tooltip]'});
+                event.preventDefault();
+            });
+        })
+        $(document).ready(function () {
+            $("body").tooltip({selector: '[data-toggle=tooltip]'});
         });</script>
     <script>
-                $(document).ready(function () {
-        $(".search_toggle").click(function () {
-        $(".hidden-lg").toggle();
-        });
+        $(document).ready(function () {
+            $(".search_toggle").click(function () {
+                $(".hidden-lg").toggle();
+            });
         });</script>
     <script>
     </script>
